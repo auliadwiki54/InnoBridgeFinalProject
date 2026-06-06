@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragment_splash">
+
+    <fragment
+        android:id="@+id/fragment_splash"
+        android:name="com.example.finalprojectinnobridge.auth.SplashFragment"
+        android:label="Splash"
+        tools:layout="@layout/fragment_splash">
+        <action
+            android:id="@+id/action_splash_to_login"
+            app:destination="@id/fragment_login"
+            app:popUpTo="@id/fragment_splash"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_login"
+        android:name="com.example.finalprojectinnobridge.auth.LogInFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/fragment_register" />
+        <action
+            android:id="@+id/action_login_to_home"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_login_to_dashboard"
+            app:destination="@id/navigation_dashboard"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_register"
+        android:name="com.example.finalprojectinnobridge.auth.RegisterFragment"
+        android:label="Register"
+        tools:layout="@layout/fragment_register" />
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.example.finalprojectinnobridge.mahasiswa.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_challenge"
+        android:name="com.example.finalprojectinnobridge.mahasiswa.ChallengeFragment"
+        android:label="Challenges"
+        tools:layout="@layout/fragment_challenge">
+        <action
+            android:id="@+id/action_challenge_to_detail"
+            app:destination="@id/navigation_challenge_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_challenge_detail"
+        android:name="com.example.finalprojectinnobridge.mahasiswa.ChallengeDetailFragment"
+        android:label="Challenge Detail"
+        tools:layout="@layout/fragment_challenge_detail">
+        <action
+            android:id="@+id/action_detail_to_submit_proposal"
+            app:destination="@id/navigation_submit_proposal" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_chat"
+        android:name="com.example.finalprojectinnobridge.mahasiswa.ChatFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_chat" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.finalprojectinnobridge.mahasiswa.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="com.example.finalprojectinnobridge.perusahaan.DashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/navigation_submit_proposal"
+        android:name="com.example.finalprojectinnobridge.mahasiswa.SubmitProposalFragment"
+        android:label="Submit Proposal"
+        tools:layout="@layout/fragment_submit_proposal" />
+
+    <fragment
+        android:id="@+id/navigation_my_proposal"
+        android:name="com.example.finalprojectinnobridge.mahasiswa.MyProposalFragment"
+        android:label="My Proposals"
+        tools:layout="@layout/fragment_my_proposal" />
+
+    <fragment
+        android:id="@+id/navigation_add_challenge"
+        android:name="com.example.finalprojectinnobridge.perusahaan.AddChallengeFragment"
+        android:label="Add Challenge"
+        tools:layout="@layout/fragment_add_challenge" />
+
+    <fragment
+        android:id="@+id/navigation_edit_challenge"
+        android:name="com.example.finalprojectinnobridge.perusahaan.EditChallengeFragment"
+        android:label="Edit Challenge"
+        tools:layout="@layout/fragment_edit_challenge" />
+
+    <fragment
+        android:id="@+id/navigation_proposal_list"
+        android:name="com.example.finalprojectinnobridge.perusahaan.ProposalListFragment"
+        android:label="Proposals"
+        tools:layout="@layout/fragment_proposal_list" />
+
+</navigation>

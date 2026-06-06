@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Ocean Breeze Theme -->
+    <color name="primary">#0057D9</color>
+    <color name="secondary">#0EA5E9</color>
+
+    <color name="primary_color">#0057D9</color>
+    <color name="secondary_color">#0EA5E9</color>
+    <color name="accent_color">#2563EB</color>
+
+    <color name="background">#EAF3FF</color>
+    <color name="background_light">#EAF3FF</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <color name="text_dark">#1E293B</color>
+    <color name="text_primary">#1E293B</color>
+
+    <color name="text_light">#64748B</color>
+    <color name="text_secondary">#64748B</color>
+
+    <color name="divider_color">#E2E8F0</color>
+
+    <color name="success">#22C55E</color>
+    <color name="warning">#FACC15</color>
+
+    <color name="error">#EF4444</color>
+    <color name="danger">#EF4444</color>
+
+    <color name="card_background">#FFFFFF</color>
+
+</resources>
