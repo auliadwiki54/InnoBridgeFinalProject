@@ -50,7 +50,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dasbor"
+                android:text="Dasbor Perusahaan"
                 android:textColor="@color/text_navy"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -87,11 +87,11 @@
                             app:tint="@color/primary_blue" />
 
                         <TextView
-                            android:id="@+id/tv_active_challenges_count"
+                            android:id="@+id/tv_active_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="24dp"
-                            android:text="12"
+                            android:text="0"
                             android:textColor="@color/text_navy"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -128,7 +128,7 @@
                             android:id="@+id/tv_total_applicants_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="84"
+                            android:text="0"
                             android:textColor="@color/text_navy"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -142,77 +142,37 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:layout_constraintEnd_toEndOf="@+id/cv_total_applicants"
-                    app:layout_constraintStart_toStartOf="@+id/cv_total_applicants"
-                    app:layout_constraintTop_toBottomOf="@+id/cv_total_applicants"
-                    app:strokeWidth="0dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <TextView
-                            android:id="@+id/tv_pending_reviews_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="18"
-                            android:textColor="@color/text_navy"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Pending\nReviews"
-                            android:textColor="@color/text_grey"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- For You Section -->
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp">
+                android:layout_marginTop="32dp"
+                android:text="Tantangan Saya"
+                android:textColor="@color/text_navy"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Untuk Anda"
-                    android:textColor="@color/text_navy"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="Semua ->"
-                    android:textColor="@color/primary_blue"
-                    android:textSize="14sp" />
-            </RelativeLayout>
-
-            <!-- List of applicants/new proposals -->
+            <!-- List of my challenges -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_for_you"
+                android:id="@+id/rv_my_challenges"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:nestedScrollingEnabled="false"
-                tools:listitem="@layout/item_proposal" />
+                tools:listitem="@layout/item_challenge" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_add_challenge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        android:src="@drawable/ic_home"
+        app:tint="@color/white"
+        app:backgroundTint="@color/primary_blue" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

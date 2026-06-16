@@ -34,4 +34,8 @@
     <color name="text_dark">#001B3D</color>
     <color name="text_light">#6B7280</color>
     <color name="card_background">#FFFFFF</color>
+
+    <!-- Missing Colors -->
+    <color name="divider_color">#E5E7EB</color>
+    <color name="error">#EF4444</color>
 </resources>

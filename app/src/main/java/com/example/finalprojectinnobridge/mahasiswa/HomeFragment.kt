@@ -19,8 +19,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: ChallengeViewModel by viewModels()
     
-    private lateinit var popularAdapter: ChallengeAdapter
-    private lateinit var forYouAdapter: ChallengeAdapter
+    private lateinit var recommendedAdapter: ChallengeAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,40 +32,29 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupRecyclerViews()
+        setupRecyclerView()
         observeViewModel()
         
         viewModel.fetchChallenges()
     }
 
-    private fun setupRecyclerViews() {
-        popularAdapter = ChallengeAdapter(emptyList()) { challenge ->
+    private fun setupRecyclerView() {
+        recommendedAdapter = ChallengeAdapter(emptyList()) { challenge ->
             val bundle = Bundle().apply {
                 putString("challengeId", challenge.challengeId)
             }
+            // Navigate to detail. Ensure the action ID exists in your nav graph.
             findNavController().navigate(R.id.action_challenge_to_detail, bundle)
         }
-        binding.rvPopular.apply {
-            adapter = popularAdapter
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        }
-
-        forYouAdapter = ChallengeAdapter(emptyList()) { challenge ->
-            val bundle = Bundle().apply {
-                putString("challengeId", challenge.challengeId)
-            }
-            findNavController().navigate(R.id.action_challenge_to_detail, bundle)
-        }
-        binding.rvForYou.apply {
-            adapter = forYouAdapter
+        binding.rvRecommended.apply {
+            adapter = recommendedAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
     private fun observeViewModel() {
         viewModel.challenges.observe(viewLifecycleOwner) { challenges ->
-            popularAdapter.updateData(challenges.take(5))
-            forYouAdapter.updateData(challenges)
+            recommendedAdapter.updateData(challenges)
         }
     }
 

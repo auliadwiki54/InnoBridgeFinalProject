@@ -2,6 +2,10 @@
     <string name="app_name">InnoBridge</string>
     <string name="slogan">Bridge Your Innovation to the Industry</string>
 
+    <!-- Google Sign-In -->
+    <!-- TODO: Replace with your actual Web Client ID from Firebase Console -->
+    <string name="default_web_client_id">YOUR_WEB_CLIENT_ID_HERE.apps.googleusercontent.com</string>
+
     <!-- Role -->
     <string name="mahasiswa">Mahasiswa</string>
     <string name="perusahaan">Perusahaan</string>

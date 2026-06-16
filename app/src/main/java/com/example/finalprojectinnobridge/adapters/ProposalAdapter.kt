@@ -25,7 +25,7 @@ class ProposalAdapter(
         val item = list[position]
         holder.binding.apply {
             tvJudulSolusi.text = item.judul
-            tvStatus.text = item.status
+            tvStatusBadge.text = item.status
             
             val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
             tvTanggal.text = sdf.format(Date(item.tanggal))

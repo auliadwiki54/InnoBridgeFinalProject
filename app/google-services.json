@@ -1,26 +1,37 @@
 {
   "project_info": {
-    "project_number": "413732227147",
-    "project_id": "innobridge-512ea",
-    "storage_bucket": "innobridge-512ea.firebasestorage.app"
+    "project_number": "91115249772",
+    "firebase_url": "https://innobridge-d856a-default-rtdb.firebaseio.com",
+    "project_id": "innobridge-d856a",
+    "storage_bucket": "innobridge-d856a.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:413732227147:android:bb349fe17c0ceea50965ce",
+        "mobilesdk_app_id": "1:91115249772:android:ccd23858472a441feff849",
         "android_client_info": {
           "package_name": "com.example.finalprojectinnobridge"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "91115249772-2clmulpgf46v8lu6grjr48mm2mbeer3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDyTGwjRnRnyptkjyjMN4Jb_RDF3dF_Ofw"
+          "current_key": "AIzaSyDnFPMj83GfgupGzfNuKxZPbrfnZlavUdY"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "91115249772-2clmulpgf46v8lu6grjr48mm2mbeer3k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

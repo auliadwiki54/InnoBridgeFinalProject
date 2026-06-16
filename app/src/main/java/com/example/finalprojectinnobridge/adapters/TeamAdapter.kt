@@ -21,9 +21,9 @@ class TeamAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
         holder.binding.apply {
-            tvMemberName.text = item.nama
-            tvMemberRole.text = item.role
-            // Use Glide or Coil to load image if profilePicture is a URL
+            tvTeamName.text = item.nama
+            tvUniversity.text = item.role
+            // Use Glide or Coil to load image if photoUrl is a URL
             
             root.setOnClickListener { onItemClick(item) }
         }

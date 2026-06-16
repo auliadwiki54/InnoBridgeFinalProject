@@ -30,10 +30,17 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val sessionManager = SessionManager(requireContext())
-        
-        // Fetch user data if needed
-        binding.tvName.text = "Company User"
-        binding.tvEmail.text = "company@example.com"
+        val userId = sessionManager.getUserId() ?: ""
+
+        // Fetch and observe user data from the ViewModel
+        authViewModel.fetchUserData(userId)
+        authViewModel.user.observe(viewLifecycleOwner) { user ->
+            user?.let {
+                binding.tvName.text = it.nama
+                binding.tvEmail.text = it.email
+                binding.tvRole.text = it.role
+            }
+        }
 
         binding.btnLogout.setOnClickListener {
             authViewModel.logout()
@@ -42,7 +49,7 @@ class ProfileFragment : Fragment() {
         }
 
         binding.btnEditProfile.setOnClickListener {
-            // Navigate to edit profile
+            // Handle edit profile navigation or logic
         }
     }
 

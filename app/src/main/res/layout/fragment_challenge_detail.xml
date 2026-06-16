@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_light">
@@ -52,6 +51,7 @@
                     android:textSize="10sp" />
 
                 <TextView
+                    android:id="@+id/tv_kategori"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -59,17 +59,6 @@
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="2dp"
                     android:text="Sustainability"
-                    android:textColor="@color/primary_blue"
-                    android:textSize="10sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_badge"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="2dp"
-                    android:text="AI/ML"
                     android:textColor="@color/primary_blue"
                     android:textSize="10sp" />
             </LinearLayout>
@@ -110,36 +99,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Problem Statement"
+                android:text="Description"
                 android:textColor="@color/text_navy"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tv_problem"
+                android:id="@+id/tv_deskripsi"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="In modern urban geography, waste management challenges continue to affect efficiency, operations, and environmental health..."
-                android:textColor="@color/text_grey"
-                android:textSize="14sp"
-                android:lineSpacingExtra="4dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Expected Outcomes"
-                android:textColor="@color/text_navy"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tv_outcomes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="A scalable routing algorithm capable of processing real-time data for waste collection..."
+                android:text="Challenge description goes here..."
                 android:textColor="@color/text_grey"
                 android:textSize="14sp"
                 android:lineSpacingExtra="4dp" />
@@ -208,6 +178,7 @@
                         android:textSize="10sp"
                         android:textStyle="bold" />
                     <TextView
+                        android:id="@+id/tv_deadline"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="October 24, 2024"
@@ -215,7 +186,7 @@
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
-                    <View android:layout_width="match_activity" android:layout_height="1dp" android:layout_marginVertical="12dp" android:background="@color/secondary_blue" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="12dp" android:background="@color/secondary_blue" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -225,6 +196,7 @@
                         android:textSize="10sp"
                         android:textStyle="bold" />
                     <TextView
+                        android:id="@+id/tv_reward"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Rp 25.000.000"

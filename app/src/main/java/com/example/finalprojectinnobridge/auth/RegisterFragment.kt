@@ -9,10 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.finalprojectinnobridge.R
-import com.example.finalprojectinnobridge.activities.MainActivity
 import com.example.finalprojectinnobridge.databinding.FragmentRegisterBinding
 import com.example.finalprojectinnobridge.utils.Constants
-import com.example.finalprojectinnobridge.utils.SessionManager
 import com.example.finalprojectinnobridge.utils.Validator
 import com.example.finalprojectinnobridge.viewmodels.AuthViewModel
 
@@ -42,14 +40,13 @@ class RegisterFragment : Fragment() {
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
             val confirmPassword = binding.etConfirmPassword.text.toString().trim()
-            val role = if (binding.toggleRole.checkedButtonId == R.id.btn_role_mahasiswa) 
+            val role = if (binding.toggleRole.checkedButtonId == R.id.btn_role_mahasiswa)
                 Constants.ROLE_MAHASISWA else Constants.ROLE_PERUSAHAAN
 
-            if (!Validator.validateName(name)) {
-                binding.tilNama.error = "Nama tidak boleh kosong"
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                Toast.makeText(requireContext(), getString(R.string.lengkapi_data), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            binding.tilNama.error = null
 
             if (!Validator.validateEmail(email)) {
                 binding.tilEmail.error = "Email tidak valid"
@@ -71,24 +68,12 @@ class RegisterFragment : Fragment() {
 
             viewModel.register(name, email, password, role) { success, message ->
                 if (success) {
-                    val user = viewModel.user.value
-                    if (user != null) {
-                        SessionManager(requireContext()).saveSession(user.uid, user.role)
-                        (activity as? MainActivity)?.updateBottomNavigation()
-                        navigateToDashboard(user.role)
-                    }
+                    Toast.makeText(requireContext(), "Registrasi Berhasil", Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
                 } else {
                     Toast.makeText(requireContext(), message ?: "Registrasi Gagal", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
-    }
-
-    private fun navigateToDashboard(role: String) {
-        if (role == Constants.ROLE_MAHASISWA) {
-            findNavController().navigate(R.id.action_login_to_home)
-        } else {
-            findNavController().navigate(R.id.action_login_to_dashboard)
         }
     }
 

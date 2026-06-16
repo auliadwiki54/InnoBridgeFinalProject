@@ -37,12 +37,12 @@
             android:textColor="@color/primary_blue"
             android:textSize="12sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/tv_tag"
+            app:layout_constraintEnd_toStartOf="@id/tv_kategori"
             app:layout_constraintStart_toEndOf="@id/iv_company_logo"
             app:layout_constraintTop_toTopOf="@id/iv_company_logo" />
 
         <TextView
-            android:id="@+id/tv_tag"
+            android:id="@+id/tv_kategori"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_badge"
