@@ -31,9 +31,9 @@ class SplashFragment : Fragment() {
                 val role = sessionManager.getUserRole()
                 (activity as? MainActivity)?.updateBottomNavigation()
                 if (role == Constants.ROLE_MAHASISWA) {
-                    findNavController().navigate(R.id.action_login_to_home)
+                    findNavController().navigate(R.id.navigation_home)
                 } else {
-                    findNavController().navigate(R.id.action_login_to_dashboard)
+                    findNavController().navigate(R.id.navigation_dashboard)
                 }
             } else {
                 findNavController().navigate(R.id.action_splash_to_login)
