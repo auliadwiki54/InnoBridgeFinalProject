@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.finalprojectinnobridge.R
 import com.example.finalprojectinnobridge.adapters.ChallengeAdapter
 import com.example.finalprojectinnobridge.databinding.FragmentHomeBinding
@@ -18,8 +19,8 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ChallengeViewModel by viewModels()
-    
-    private lateinit var recommendedAdapter: ChallengeAdapter
+
+    private lateinit var challengeAdapter: ChallengeAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,28 +34,70 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+        setupCategoryButtons() // Inisialisasi fungsi klik kategori
         observeViewModel()
-        
+
         viewModel.fetchChallenges()
     }
 
     private fun setupRecyclerView() {
-        recommendedAdapter = ChallengeAdapter(emptyList()) { challenge ->
+        challengeAdapter = ChallengeAdapter(emptyList()) { challenge ->
             val bundle = Bundle().apply {
                 putString("challengeId", challenge.challengeId)
             }
-            // Navigate to detail. Ensure the action ID exists in your nav graph.
+            // Navigasi ke detail tantangan.
             findNavController().navigate(R.id.action_challenge_to_detail, bundle)
         }
-        binding.rvRecommended.apply {
-            adapter = recommendedAdapter
-            layoutManager = LinearLayoutManager(requireContext())
+
+        // Menggunakan ID XML baru (rv_challenges) dan diatur menjadi Grid 2 Kolom
+        binding.rvChallenges.apply {
+            adapter = challengeAdapter
+            layoutManager = GridLayoutManager(requireContext(), 2)
         }
+    }
+
+    /**
+     * Mengatur aksi ketika tombol kategori pada layout diklik oleh pengguna.
+     */
+    private fun setupCategoryButtons() {
+        binding.btnKatLingkungan.setOnClickListener {
+            handleCategoryClick("Lingkungan")
+        }
+
+        binding.btnKatEnergi.setOnClickListener {
+            handleCategoryClick("Energi")
+        }
+
+        binding.btnKatIt.setOnClickListener {
+            handleCategoryClick("IT")
+        }
+
+        binding.btnKatKesehatan.setOnClickListener {
+            handleCategoryClick("Kesehatan")
+        }
+
+        binding.tvLihatSemua.setOnClickListener {
+            handleCategoryClick("Semua")
+        }
+    }
+
+    /**
+     * Memproses filter data berdasarkan nama kategori yang dipilih.
+     */
+    private fun handleCategoryClick(kategori: String) {
+        Toast.makeText(requireContext(), "Kategori $kategori dipilih", Toast.LENGTH_SHORT).show()
+
+        // JIKA VIEWMODEL ANDA MEMILIKI FUNGSI FILTER, AKTIFKAN LOGIKA INI:
+        // if (kategori == "Semua") {
+        //     viewModel.fetchChallenges()
+        // } else {
+        //     viewModel.fetchChallengesByCategory(kategori)
+        // }
     }
 
     private fun observeViewModel() {
         viewModel.challenges.observe(viewLifecycleOwner) { challenges ->
-            recommendedAdapter.updateData(challenges)
+            challengeAdapter.updateData(challenges)
         }
     }
 

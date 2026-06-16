@@ -2,6 +2,7 @@ package com.example.finalprojectinnobridge.activities
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
@@ -39,24 +40,26 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val sessionManager = SessionManager(this)
             val role = sessionManager.getUserRole()
-            
+
             val isMahasiswa = role == Constants.ROLE_MAHASISWA
             val isPerusahaan = role == Constants.ROLE_PERUSAHAAN
 
-            val bottomNavDestinations = if (isMahasiswa) {
-                setOf(R.id.navigation_home, R.id.navigation_chat, R.id.navigation_my_proposal, R.id.navigation_profile)
-            } else {
-                setOf(R.id.navigation_dashboard, R.id.navigation_chat, R.id.navigation_proposal_list, R.id.navigation_profile_perusahaan)
-            }
+            // 4 Destinasi menu utama dasar masing-masing peran
+            val mahasiswaDestinations = setOf(
+                R.id.navigation_home, R.id.navigation_chat, R.id.navigation_my_proposal, R.id.navigation_profile
+            )
+            val perusahaanDestinations = setOf(
+                R.id.navigation_dashboard, R.id.navigation_chat, R.id.navigation_proposal_list, R.id.navigation_profile_perusahaan
+            )
 
-            if (destination.id in bottomNavDestinations) {
+            // FAB tetap tampil saat Mahasiswa berada di halaman utama ataupun halaman list tantangan
+            if (isMahasiswa && (destination.id in mahasiswaDestinations || destination.id == R.id.navigation_challenge)) {
                 binding.bottomAppBar.visibility = View.VISIBLE
-                if (isPerusahaan) {
-                    binding.fabAdd.visibility = View.VISIBLE
-                } else {
-                    binding.fabAdd.visibility = View.GONE
-                }
-                // Hide toolbar title if it's a main screen as requested
+                binding.fabAdd.visibility = View.VISIBLE
+                supportActionBar?.setDisplayShowTitleEnabled(false)
+            } else if (isPerusahaan && destination.id in perusahaanDestinations) {
+                binding.bottomAppBar.visibility = View.VISIBLE
+                binding.fabAdd.visibility = View.VISIBLE
                 supportActionBar?.setDisplayShowTitleEnabled(false)
             } else {
                 binding.bottomAppBar.visibility = View.GONE
@@ -66,7 +69,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fabAdd.setOnClickListener {
-            navController.navigate(R.id.navigation_add_challenge)
+            val sessionManager = SessionManager(this)
+            val role = sessionManager.getUserRole()
+
+            when (role) {
+                Constants.ROLE_MAHASISWA -> {
+                    // Tombol + Mahasiswa membuka halaman list Tantangan (ChallengeFragment)
+                    navController.navigate(R.id.navigation_challenge)
+                }
+                Constants.ROLE_PERUSAHAAN -> {
+                    // Tombol + Perusahaan membuka halaman form Add Challenge
+                    navController.navigate(R.id.navigation_add_challenge)
+                }
+                else -> {
+                    Toast.makeText(this, "Akses peran tidak valid", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 

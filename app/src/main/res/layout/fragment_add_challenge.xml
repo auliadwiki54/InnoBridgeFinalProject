@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="100dp">
+        android:paddingBottom="120dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -152,10 +152,14 @@
                 android:alignmentMode="alignMargins">
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_sdg_7"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_margin="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
                     app:strokeColor="#EEEEEE"
@@ -184,10 +188,14 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_sdg_9"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_margin="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
                     app:strokeColor="#EEEEEE"
@@ -216,10 +224,14 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_sdg_11"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_margin="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
                     app:strokeColor="#EEEEEE"
@@ -248,10 +260,14 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_sdg_14"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_margin="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
                     app:strokeColor="#EEEEEE"
@@ -387,8 +403,30 @@
                             android:textSize="11sp" />
                     </LinearLayout>
                 </LinearLayout>
-
             </RadioGroup>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Batas Waktu (Deadline)"
+                android:textColor="#1A237E"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/et_deadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_input_blue"
+                android:hint="Pilih Tanggal Batas Akhir..."
+                android:padding="16dp"
+                android:textSize="14sp"
+                android:focusable="false"
+                android:clickable="true"
+                android:importantForAutofill="no"
+                android:inputType="none" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
+    android:layout_margin="6dp"
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
@@ -14,12 +14,12 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="12dp">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_company_logo"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:padding="4dp"
             android:src="@drawable/ic_innovation"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,40 +32,46 @@
             android:id="@+id/tv_company_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
             android:text="EcoLogistics Ltd."
             android:textColor="@color/primary_blue"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/tv_kategori"
-            app:layout_constraintStart_toEndOf="@id/iv_company_logo"
-            app:layout_constraintTop_toTopOf="@id/iv_company_logo" />
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_company_logo" />
 
         <TextView
             android:id="@+id/tv_kategori"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_badge"
-            android:paddingHorizontal="8dp"
+            android:paddingHorizontal="6dp"
             android:paddingVertical="2dp"
             android:text="SDG 9"
             android:textColor="@color/primary_blue"
-            android:textSize="10sp"
+            android:textSize="9sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/iv_company_logo"
+            app:layout_constraintBottom_toBottomOf="@id/iv_company_logo"
+            tools:ignore="SmallSp" />
 
         <TextView
             android:id="@+id/tv_judul"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:text="Smart City Waste Management App"
             android:textColor="@color/text_navy"
-            android:textSize="16sp"
+            android:textSize="13sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_company_logo" />
+            app:layout_constraintTop_toBottomOf="@id/tv_company_name" />
 
         <TextView
             android:id="@+id/tv_deskripsi"
@@ -76,7 +82,7 @@
             android:maxLines="2"
             android:text="Kembangkan aplikasi mobile berbasis Kotlin untuk mengoptimalkan rute pengumpulan sampah..."
             android:textColor="@color/text_grey"
-            android:textSize="13sp"
+            android:textSize="11sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_judul" />
@@ -85,34 +91,35 @@
             android:id="@+id/ll_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@id/tv_deskripsi">
 
             <TextView
                 android:id="@+id/tv_deadline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawablePadding="4dp"
                 android:text="2 Minggu Tersisa"
                 android:textColor="@color/text_light_grey"
-                android:textSize="11sp" />
+                android:textSize="10sp"
+                tools:ignore="SmallSp" />
 
             <TextView
                 android:id="@+id/tv_participants"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginTop="2dp"
                 android:text="24 Partisipan"
                 android:textColor="@color/text_light_grey"
-                android:textSize="11sp" />
+                android:textSize="10sp"
+                tools:ignore="SmallSp" />
         </LinearLayout>
 
         <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:background="@color/secondary_blue"
             app:layout_constraintTop_toBottomOf="@id/ll_info" />
 
@@ -120,12 +127,13 @@
             android:id="@+id/tv_prize_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:text="Prize Pool"
             android:textColor="@color/text_light_grey"
-            android:textSize="11sp"
+            android:textSize="10sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider" />
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            tools:ignore="SmallSp" />
 
         <TextView
             android:id="@+id/tv_reward"
@@ -133,7 +141,7 @@
             android:layout_height="wrap_content"
             android:text="Rp 25 Jt"
             android:textColor="@color/text_navy"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_prize_label" />
@@ -142,9 +150,9 @@
             android:id="@+id/tv_detail_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Detail Tantangan ->"
+            android:text="Detail ->"
             android:textColor="@color/primary_blue"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/tv_reward"
             app:layout_constraintEnd_toEndOf="parent"
