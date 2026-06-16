@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Panggil installSplashScreen sebelum super.onCreate
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
@@ -41,17 +40,33 @@ class MainActivity : AppCompatActivity() {
             val sessionManager = SessionManager(this)
             val role = sessionManager.getUserRole()
             
-            val bottomNavDestinations = if (role == Constants.ROLE_MAHASISWA) {
+            val isMahasiswa = role == Constants.ROLE_MAHASISWA
+            val isPerusahaan = role == Constants.ROLE_PERUSAHAAN
+
+            val bottomNavDestinations = if (isMahasiswa) {
                 setOf(R.id.navigation_home, R.id.navigation_chat, R.id.navigation_my_proposal, R.id.navigation_profile)
             } else {
-                setOf(R.id.navigation_dashboard, R.id.navigation_chat, R.id.navigation_proposal_list, R.id.navigation_profile)
+                setOf(R.id.navigation_dashboard, R.id.navigation_chat, R.id.navigation_proposal_list, R.id.navigation_profile_perusahaan)
             }
 
             if (destination.id in bottomNavDestinations) {
-                binding.bottomNavigation.visibility = View.VISIBLE
+                binding.bottomAppBar.visibility = View.VISIBLE
+                if (isPerusahaan) {
+                    binding.fabAdd.visibility = View.VISIBLE
+                } else {
+                    binding.fabAdd.visibility = View.GONE
+                }
+                // Hide toolbar title if it's a main screen as requested
+                supportActionBar?.setDisplayShowTitleEnabled(false)
             } else {
-                binding.bottomNavigation.visibility = View.GONE
+                binding.bottomAppBar.visibility = View.GONE
+                binding.fabAdd.visibility = View.GONE
+                supportActionBar?.setDisplayShowTitleEnabled(true)
             }
+        }
+
+        binding.fabAdd.setOnClickListener {
+            navController.navigate(R.id.navigation_add_challenge)
         }
     }
 
@@ -59,18 +74,17 @@ class MainActivity : AppCompatActivity() {
         val sessionManager = SessionManager(this)
         val role = sessionManager.getUserRole()
 
+        binding.bottomNavigation.menu.clear()
         if (role == Constants.ROLE_MAHASISWA) {
-            binding.bottomNavigation.menu.clear()
             binding.bottomNavigation.inflateMenu(R.menu.bottom_nav_menu)
             val topLevelDestinations = setOf(
                 R.id.navigation_home, R.id.navigation_chat, R.id.navigation_my_proposal, R.id.navigation_profile
             )
             appBarConfiguration = AppBarConfiguration(topLevelDestinations)
         } else if (role == Constants.ROLE_PERUSAHAAN) {
-            binding.bottomNavigation.menu.clear()
             binding.bottomNavigation.inflateMenu(R.menu.bottom_nav_menu_perusahaan)
             val topLevelDestinations = setOf(
-                R.id.navigation_dashboard, R.id.navigation_chat, R.id.navigation_proposal_list, R.id.navigation_profile
+                R.id.navigation_dashboard, R.id.navigation_chat, R.id.navigation_proposal_list, R.id.navigation_profile_perusahaan
             )
             appBarConfiguration = AppBarConfiguration(topLevelDestinations)
         } else {
