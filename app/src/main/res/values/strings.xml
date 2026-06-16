@@ -4,7 +4,7 @@
 
     <!-- Google Sign-In -->
     <!-- TODO: Replace with your actual Web Client ID from Firebase Console -->
-    <string name="default_web_client_id">YOUR_WEB_CLIENT_ID_HERE.apps.googleusercontent.com</string>
+    <string name="default_web_client_id">91115249772-2clmulpgf46v8lu6grjr48mm2mbeer3k.apps.googleusercontent.com</string>
 
     <!-- Role -->
     <string name="mahasiswa">Mahasiswa</string>
