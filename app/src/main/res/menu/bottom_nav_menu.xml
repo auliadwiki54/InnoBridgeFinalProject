@@ -12,9 +12,9 @@
         android:title="Chat" />
 
     <item
-        android:id="@+id/placeholder"
-        android:title=""
-        android:enabled="false" />
+        android:id="@+id/navigation_challenge"
+        android:icon="@drawable/ic_add"
+        android:title="Tantangan" />
 
     <item
         android:id="@+id/navigation_my_proposal"
@@ -25,4 +25,5 @@
         android:id="@+id/navigation_profile"
         android:icon="@drawable/ic_profile"
         android:title="Profil" />
+
 </menu>

@@ -30,33 +30,39 @@ class EditChallengeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Mengambil argument ID tantangan yang dikirim dari list dashboard
         challengeId = arguments?.getString("challengeId")
 
         observeViewModel()
 
+        // Tombol Update Tantangan
         binding.btnUpdate.setOnClickListener {
             val judul = binding.etJudul.text.toString().trim()
             val deskripsi = binding.etDeskripsi.text.toString().trim()
-            val kategori = binding.etKategori.text.toString().trim()
+            val latarBelakang = binding.etLatarBelakang.text.toString().trim()
             val reward = binding.etReward.text.toString().trim()
             val deadline = binding.etDeadline.text.toString().trim()
 
-            if (judul.isEmpty() || deskripsi.isEmpty() || kategori.isEmpty() || reward.isEmpty() || deadline.isEmpty()) {
-                Toast.makeText(requireContext(), "Harap isi semua field", Toast.LENGTH_SHORT).show()
+            // Validasi Input Utama
+            if (judul.isEmpty() || deskripsi.isEmpty() || reward.isEmpty() || deadline.isEmpty()) {
+                Toast.makeText(requireContext(), "Harap isi semua field utama", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             val existingChallenge = viewModel.challenges.value?.find { it.challengeId == challengeId }
+
+            // Mengemas data lama dan memperbarui field yang diubah
             val updatedChallenge = existingChallenge?.copy(
                 judul = judul,
-                deskripsi = deskripsi,
-                kategori = kategori,
+                deskripsi = "$deskripsi\n\nLatar Belakang: $latarBelakang",
+                kategori = existingChallenge.kategori, // Tetap memegang kategori awal agar tidak null
                 reward = reward,
                 deadline = deadline
             )
 
             updatedChallenge?.let {
-                viewModel.addChallenge(it) { success, message ->
+                // 🌟 KUNCI FIX: Panggil fungsi UPDATE, jangan fungsi ADD agar tidak menduplikat data baru
+                viewModel.updateChallenge(it) { success, message ->
                     if (success) {
                         Toast.makeText(requireContext(), "Tantangan diperbarui", Toast.LENGTH_SHORT).show()
                         findNavController().navigateUp()
@@ -67,6 +73,7 @@ class EditChallengeFragment : Fragment() {
             }
         }
 
+        // Tombol Hapus Tantangan
         binding.btnDelete.setOnClickListener {
             challengeId?.let { id ->
                 viewModel.deleteChallenge(id) { success, message ->
@@ -86,8 +93,16 @@ class EditChallengeFragment : Fragment() {
             val challenge = challenges.find { it.challengeId == challengeId }
             challenge?.let {
                 binding.etJudul.setText(it.judul)
-                binding.etDeskripsi.setText(it.deskripsi)
-                binding.etKategori.setText(it.kategori)
+
+                // Memisahkan kembali string deskripsi dan latar belakang secara cerdas jika mengandung penanda pemisah
+                if (it.deskripsi.contains("\n\nLatar Belakang: ")) {
+                    val parts = it.deskripsi.split("\n\nLatar Belakang: ")
+                    binding.etDeskripsi.setText(parts[0])
+                    binding.etLatarBelakang.setText(parts[1])
+                } else {
+                    binding.etDeskripsi.setText(it.deskripsi)
+                }
+
                 binding.etReward.setText(it.reward)
                 binding.etDeadline.setText(it.deadline)
             }

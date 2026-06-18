@@ -3,6 +3,7 @@ package com.example.finalprojectinnobridge.repositories
 import com.example.finalprojectinnobridge.firebase.FirebaseManager
 import com.example.finalprojectinnobridge.models.Proposal
 import com.example.finalprojectinnobridge.utils.Constants
+import com.google.firebase.firestore.ListenerRegistration
 
 class ProposalRepository {
     private val db = FirebaseManager.getInstance().db
@@ -26,6 +27,33 @@ class ProposalRepository {
             }
             .addOnFailureListener {
                 callback(emptyList(), it.message)
+            }
+    }
+
+    // New: Real-time listener for all proposals (useful for company stats)
+    fun listenAllProposals(callback: (List<Proposal>, String?) -> Unit): ListenerRegistration {
+        return db.collection(Constants.PROPOSALS_COLLECTION)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    callback(emptyList(), error.message)
+                    return@addSnapshotListener
+                }
+                val proposals = value?.toObjects(Proposal::class.java) ?: emptyList()
+                callback(proposals, null)
+            }
+    }
+
+    // New: Real-time listener for user proposals
+    fun listenProposalsByUser(userId: String, callback: (List<Proposal>, String?) -> Unit): ListenerRegistration {
+        return db.collection(Constants.PROPOSALS_COLLECTION)
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    callback(emptyList(), error.message)
+                    return@addSnapshotListener
+                }
+                val proposals = value?.toObjects(Proposal::class.java) ?: emptyList()
+                callback(proposals, null)
             }
     }
 

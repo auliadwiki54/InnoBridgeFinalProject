@@ -36,18 +36,29 @@ class SubmitProposalFragment : Fragment() {
         binding.btnSubmit.setOnClickListener {
             val judul = binding.etJudul.text.toString().trim()
             val solusi = binding.etSolusi.text.toString().trim()
+            val videoUrl = binding.etVideoUrl?.text.toString().trim() // Optional if added to XML
 
             if (judul.isEmpty() || solusi.isEmpty()) {
                 Toast.makeText(requireContext(), "Harap isi semua field", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val userId = SessionManager(requireContext()).getUserId() ?: ""
+            val sessionManager = SessionManager(requireContext())
+            val userId = sessionManager.getUserId() ?: ""
+            val userName = sessionManager.getUserName() ?: ""
+            
+            // Note: University could be added to SessionManager or User model if available
+            // For now using a placeholder or common session info
+            val userUni = "Universitas" 
+
             val proposal = Proposal(
                 challengeId = challengeId ?: "",
                 userId = userId,
+                userName = userName,
+                userUniversity = userUni,
                 judul = judul,
                 solusi = solusi,
+                pitchVideo = videoUrl,
                 status = "Pending"
             )
 

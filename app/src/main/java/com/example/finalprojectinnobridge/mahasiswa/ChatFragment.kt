@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.finalprojectinnobridge.adapters.MessageAdapter
+import com.example.finalprojectinnobridge.R
+import com.example.finalprojectinnobridge.adapters.ChatListAdapter
 import com.example.finalprojectinnobridge.databinding.FragmentChatBinding
-import com.example.finalprojectinnobridge.models.Message
 import com.example.finalprojectinnobridge.utils.SessionManager
 import com.example.finalprojectinnobridge.viewmodels.MessageViewModel
 
@@ -18,9 +19,10 @@ class ChatFragment : Fragment() {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
+
     private val viewModel: MessageViewModel by viewModels()
-    private lateinit var messageAdapter: MessageAdapter
-    private var receiverId: String? = "company_dummy_id" // In real app, pass via args
+    private lateinit var chatListAdapter: ChatListAdapter
+    private var myId: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,51 +35,67 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val sessionManager = SessionManager(requireContext())
-        val currentUserId = sessionManager.getUserId() ?: ""
+        myId = SessionManager(requireContext()).getUserId() ?: ""
 
-        setupRecyclerView(currentUserId)
-        observeViewModel()
-
-        receiverId?.let { 
-            viewModel.fetchMessages(currentUserId, it)
+        if (myId.isEmpty()) {
+            Toast.makeText(requireContext(), "User ID tidak ditemukan", Toast.LENGTH_SHORT).show()
+            return
         }
 
-        binding.btnSend.setOnClickListener {
-            val text = binding.etMessage.text.toString().trim()
-            if (text.isNotEmpty() && receiverId != null) {
-                val message = Message(
-                    senderId = currentUserId,
-                    receiverId = receiverId!!,
-                    message = text,
-                    timestamp = System.currentTimeMillis()
-                )
-                viewModel.sendMessage(message) { success, error ->
-                    if (success) {
-                        binding.etMessage.text.clear()
+        setupRecyclerView()
+        observeChatInbox()
+    }
+
+    private fun setupRecyclerView() {
+        chatListAdapter = ChatListAdapter(emptyList(), myId) { partnerId, partnerName ->
+            if (partnerId.isEmpty()) {
+                Toast.makeText(requireContext(), "ID Partner tidak valid", Toast.LENGTH_SHORT).show()
+                return@ChatListAdapter
+            }
+
+            val bundle = Bundle().apply {
+                putString("partnerId", partnerId)
+                putString("partnerName", partnerName.ifEmpty { "User ($partnerId)" })
+            }
+            try {
+                findNavController().navigate(R.id.action_navigation_chat_to_navigation_chat_room, bundle)
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Gagal membuka chat: ${e.message}", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+            }
+        }
+
+        binding.rvChatList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = chatListAdapter
+        }
+    }
+
+    private fun observeChatInbox() {
+        viewModel.fetchMessages(myId, "")
+        viewModel.messages.observe(viewLifecycleOwner) { listPesan ->
+            if (listPesan != null && listPesan.isNotEmpty()) {
+                // Group messages by partner (sender or receiver)
+                val latestMessages = listPesan.groupBy {
+                    if (it.senderId == myId) it.receiverId else it.senderId
+                }.mapNotNull { (partnerId, messages) ->
+                    if (partnerId.isNotEmpty() && messages.isNotEmpty()) {
+                        messages.last() // Get latest message from this partner
                     } else {
-                        Toast.makeText(requireContext(), error ?: "Gagal mengirim pesan", Toast.LENGTH_SHORT).show()
+                        null
                     }
                 }
+
+                chatListAdapter.updateData(latestMessages)
+                binding.rvChatList.visibility = if (latestMessages.isEmpty()) View.GONE else View.VISIBLE
+            } else {
+                binding.rvChatList.visibility = View.GONE
             }
         }
-    }
 
-    private fun setupRecyclerView(currentUserId: String) {
-        messageAdapter = MessageAdapter(emptyList(), currentUserId)
-        binding.rvChat.apply {
-            adapter = messageAdapter
-            layoutManager = LinearLayoutManager(requireContext()).apply {
-                stackFromEnd = true
-            }
-        }
-    }
-
-    private fun observeViewModel() {
-        viewModel.messages.observe(viewLifecycleOwner) { messages ->
-            messageAdapter.updateData(messages)
-            if (messages.isNotEmpty()) {
-                binding.rvChat.smoothScrollToPosition(messages.size - 1)
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            error?.let {
+                Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
             }
         }
     }

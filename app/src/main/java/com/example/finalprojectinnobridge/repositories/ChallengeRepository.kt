@@ -28,6 +28,22 @@ class ChallengeRepository {
             }
     }
 
+    // 🌟 KUNCI FIX: Fungsi Update murni menimpa dokumen lama berdasarkan ChallengeId aslinya
+    fun updateChallenge(challenge: Challenge, callback: (Boolean, String?) -> Unit) {
+        if (challenge.challengeId.isBlank()) {
+            callback(false, "ID Tantangan tidak valid atau kosong")
+            return
+        }
+
+        // Membuka dokumen spesifik berdasarkan id yang mau diedit, lalu menimpanya dengan data baru
+        db.collection(Constants.CHALLENGES_COLLECTION)
+            .document(challenge.challengeId)
+            .set(challenge) // .set() akan otomatis mengganti (overwrite) data lama di Firestore
+            .addOnCompleteListener { task ->
+                callback(task.isSuccessful, task.exception?.message)
+            }
+    }
+
     fun deleteChallenge(challengeId: String, callback: (Boolean, String?) -> Unit) {
         db.collection(Constants.CHALLENGES_COLLECTION).document(challengeId)
             .delete()

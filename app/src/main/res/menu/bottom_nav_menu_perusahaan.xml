@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_home"
         android:title="Dasbor" />
+
     <item
-        android:id="@+id/navigation_chat"
+        android:id="@+id/navigation_chat_perusahaan"
         android:icon="@drawable/ic_chat"
         android:title="Chat" />
-    <!-- Placeholder for the FAB in the middle -->
+
     <item
-        android:id="@+id/navigation_placeholder"
-        android:enabled="false"
-        android:title="" />
+        android:id="@+id/navigation_add_challenge"
+        android:icon="@drawable/ic_add"
+        android:title="Tantangan" />
+
     <item
         android:id="@+id/navigation_proposal_list"
         android:icon="@drawable/ic_challenge"
         android:title="Proposal" />
+
     <item
         android:id="@+id/navigation_profile_perusahaan"
         android:icon="@drawable/ic_profile"
         android:title="Profil" />
+
 </menu>

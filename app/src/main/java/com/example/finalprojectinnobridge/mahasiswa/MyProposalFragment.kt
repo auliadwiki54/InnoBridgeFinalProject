@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.finalprojectinnobridge.R
 import com.example.finalprojectinnobridge.adapters.ProposalAdapter
 import com.example.finalprojectinnobridge.databinding.FragmentMyProposalBinding
 import com.example.finalprojectinnobridge.utils.SessionManager
@@ -34,13 +36,19 @@ class MyProposalFragment : Fragment() {
         observeViewModel()
 
         val userId = SessionManager(requireContext()).getUserId() ?: ""
-        viewModel.fetchProposalsByUser(userId)
+        viewModel.listenToUserProposals(userId)
     }
 
     private fun setupRecyclerView() {
-        proposalAdapter = ProposalAdapter(emptyList()) { proposal ->
-            // Handle click if needed, e.g., show detail
-        }
+        proposalAdapter = ProposalAdapter(
+            list = emptyList(),
+            onDetailClick = { proposal ->
+                val bundle = Bundle().apply {
+                    putString("proposalId", proposal.proposalId)
+                }
+                findNavController().navigate(R.id.action_navigation_my_proposal_to_navigation_proposal_detail, bundle)
+            }
+        )
         binding.rvProposals.apply {
             adapter = proposalAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -52,7 +60,7 @@ class MyProposalFragment : Fragment() {
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
 
-        viewModel.proposals.observe(viewLifecycleOwner) { proposals ->
+        viewModel.userProposals.observe(viewLifecycleOwner) { proposals ->
             proposalAdapter.updateData(proposals)
             binding.tvEmpty.visibility = if (proposals.isEmpty()) View.VISIBLE else View.GONE
         }

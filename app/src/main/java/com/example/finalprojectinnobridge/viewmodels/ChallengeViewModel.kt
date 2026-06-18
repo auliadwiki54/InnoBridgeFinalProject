@@ -38,6 +38,15 @@ class ChallengeViewModel : ViewModel() {
         }
     }
 
+    // 🌟 KUNCI FIX: Menambahkan fungsi update agar murni mengedit, bukan menduplikat
+    fun updateChallenge(challenge: Challenge, callback: (Boolean, String?) -> Unit) {
+        _isLoading.value = true
+        repository.updateChallenge(challenge) { success, err ->
+            _isLoading.value = false
+            callback(success, err)
+        }
+    }
+
     fun deleteChallenge(challengeId: String, callback: (Boolean, String?) -> Unit) {
         _isLoading.value = true
         repository.deleteChallenge(challengeId) { success, err ->

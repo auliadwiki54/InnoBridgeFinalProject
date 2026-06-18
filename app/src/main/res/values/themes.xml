@@ -1,7 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.FinalProjectInnoBridge" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryVariant">@color/secondary_color</item>
         <item name="colorSecondary">@color/secondary_color</item>
@@ -11,10 +10,28 @@
 
     <style name="Theme.FinalProjectInnoBridge" parent="Base.Theme.FinalProjectInnoBridge" />
 
-    <!-- Splash Screen Theme -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/background_light</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/logo_innobridge</item>
         <item name="postSplashScreenTheme">@style/Theme.FinalProjectInnoBridge</item>
+    </style>
+
+    <style name="Theme.BottomNavCustom" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:theme">@style/OverlayBottomNavColors</item>
+
+        <item name="itemTextAppearanceActive">@style/BottomNavTextSize</item>
+        <item name="itemTextAppearanceInactive">@style/BottomNavTextSize</item>
+    </style>
+
+    <style name="OverlayBottomNavColors">
+        <item name="colorContainer">#00000000</item>
+
+        <item name="colorPrimary">#0056D2</item>
+
+        <item name="colorOnSurfaceVariant">#6B7280</item>
+    </style>
+
+    <style name="BottomNavTextSize">
+        <item name="android:textSize">10sp</item>
     </style>
 </resources>

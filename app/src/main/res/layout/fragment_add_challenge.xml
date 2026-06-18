@@ -21,6 +21,61 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Thumbnail Tantangan (Opsional)"
+                android:textColor="#1A237E"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_image_picker"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#EEEEEE"
+                app:strokeWidth="1dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/iv_challenge_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/bg_badge"
+                        app:tint="#E0E0E0" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@android:drawable/ic_menu_camera"
+                            app:tint="#1A237E" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Ambil Foto atau Pilih Galeri"
+                            android:textColor="#1A237E"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
                 android:text="Judul Masalah"
                 android:textColor="#1A237E"
                 android:textSize="16sp"
@@ -33,10 +88,10 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_input_blue"
                 android:hint="Contoh: Sistem AI untuk Deteksi Hama Padi"
-                android:padding="16dp"
-                android:textSize="14sp"
                 android:importantForAutofill="no"
-                android:inputType="text" />
+                android:inputType="text"
+                android:padding="16dp"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -55,10 +110,10 @@
                 android:background="@drawable/bg_input_blue"
                 android:gravity="top"
                 android:hint="Jelaskan tantangan yang dihadapi secara detail..."
-                android:padding="16dp"
-                android:textSize="14sp"
                 android:importantForAutofill="no"
-                android:inputType="textMultiLine" />
+                android:inputType="textMultiLine"
+                android:padding="16dp"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -77,18 +132,10 @@
                 android:background="@drawable/bg_input_blue"
                 android:gravity="top"
                 android:hint="Jelaskan latar belakang masalah dan apa yang ingin dicapai..."
-                android:padding="16dp"
-                android:textSize="14sp"
                 android:importantForAutofill="no"
-                android:inputType="textMultiLine" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Bantuan konteks mengenai masalah ini penting untuk dioptimalkan."
-                android:textColor="#757575"
-                android:textSize="11sp" />
+                android:inputType="textMultiLine"
+                android:padding="16dp"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -107,30 +154,11 @@
                 app:chipSpacingHorizontal="8dp">
 
                 <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Mahasiswa IT"
-                    app:chipBackgroundColor="#E8EAF6"
-                    app:chipStrokeWidth="0dp" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Teknik Lingkungan"
-                    app:chipBackgroundColor="#E8EAF6"
-                    app:chipStrokeWidth="0dp" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Data Scientist"
-                    app:chipBackgroundColor="#E8EAF6"
-                    app:chipStrokeWidth="0dp" />
-
-                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_add_target"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="+"
+                    android:checkable="false"
                     app:chipBackgroundColor="#E0E0E0"
                     app:chipStrokeWidth="0dp" />
             </com.google.android.material.chip.ChipGroup>
@@ -148,8 +176,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:columnCount="2"
-                android:alignmentMode="alignMargins">
+                android:alignmentMode="alignMargins"
+                android:columnCount="2">
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_sdg_7"
@@ -167,23 +195,23 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="12dp"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="12dp">
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:contentDescription="SDG 7"
                             android:src="@drawable/ic_innovation"
-                            app:tint="#FFB300"
-                            android:contentDescription="SDG 7" />
+                            app:tint="#FFB300" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="SDG 7: Energi Bersih"
-                            android:textSize="10sp"
                             android:textAlignment="center"
-                            android:textColor="#424242"/>
+                            android:textColor="#424242"
+                            android:textSize="10sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -203,23 +231,23 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="12dp"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="12dp">
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:contentDescription="SDG 9"
                             android:src="@drawable/ic_innovation"
-                            app:tint="#E91E63"
-                            android:contentDescription="SDG 9" />
+                            app:tint="#E91E63" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="SDG 9: Industri &amp; Inovasi"
-                            android:textSize="10sp"
                             android:textAlignment="center"
-                            android:textColor="#424242"/>
+                            android:textColor="#424242"
+                            android:textSize="10sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -239,23 +267,23 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="12dp"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="12dp">
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:contentDescription="SDG 11"
                             android:src="@drawable/ic_innovation"
-                            app:tint="#1565C0"
-                            android:contentDescription="SDG 11" />
+                            app:tint="#1565C0" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="SDG 11: Kota Berkelanjutan"
-                            android:textSize="10sp"
                             android:textAlignment="center"
-                            android:textColor="#424242"/>
+                            android:textColor="#424242"
+                            android:textSize="10sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -275,23 +303,23 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="12dp"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="12dp">
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:contentDescription="SDG 14"
                             android:src="@drawable/ic_innovation"
-                            app:tint="#0277BD"
-                            android:contentDescription="SDG 14" />
+                            app:tint="#0277BD" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="SDG 14: Ekosistem Laut"
-                            android:textSize="10sp"
                             android:textAlignment="center"
-                            android:textColor="#424242"/>
+                            android:textColor="#424242"
+                            android:textSize="10sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </GridLayout>
@@ -311,99 +339,69 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
 
-                <LinearLayout
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rb_eksklusif"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:background="@drawable/bg_input_blue"
-                    android:orientation="horizontal"
-                    android:padding="12dp">
-                    <RadioButton
-                        android:id="@+id/rb_eksklusif"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:buttonTint="#1A237E"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Lisensi Eksklusif"
-                            android:textColor="#1A237E"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Seluruh Hak Kekayaan Intelektual (HKI) akan dimiliki oleh perusahaan penyelenggara."
-                            android:textColor="#757575"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-                </LinearLayout>
+                    android:buttonTint="#1A237E"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp"
+                    android:text="Lisensi Eksklusif\nSeluruh Hak Kekayaan Intelektual (HKI) akan dimiliki oleh perusahaan penyelenggara."
+                    android:textColor="#1A237E"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-                <LinearLayout
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rb_revenue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:background="@drawable/bg_input_blue"
-                    android:orientation="horizontal"
-                    android:padding="12dp">
-                    <RadioButton
-                        android:id="@+id/rb_revenue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:buttonTint="#1A237E"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Bagi Hasil (Revenue Share)"
-                            android:textColor="#1A237E"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Inovator tetap memegang hak cipta, namun mendapat kompensasi dari keuntungan komersial."
-                            android:textColor="#757575"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-                </LinearLayout>
+                    android:buttonTint="#1A237E"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp"
+                    android:text="Bagi Hasil (Revenue Share)\nInovator tetap memegang hak cipta, namun mendapat kompensasi dari keuntungan komersial."
+                    android:textColor="#1A237E"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-                <LinearLayout
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rb_open_collab"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:background="@drawable/bg_input_blue"
-                    android:orientation="horizontal"
-                    android:padding="12dp">
-                    <RadioButton
-                        android:id="@+id/rb_open_collab"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:buttonTint="#1A237E"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Open Collaboration"
-                            android:textColor="#1A237E"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Solusi bersifat open source untuk kepentingan publik dengan atribusi inovator."
-                            android:textColor="#757575"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-                </LinearLayout>
+                    android:buttonTint="#1A237E"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp"
+                    android:text="Open Collaboration\nSolusi bersifat open source untuk kepentingan publik dengan atribusi inovator."
+                    android:textColor="#1A237E"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
             </RadioGroup>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Total Hadiah (Reward)"
+                android:textColor="#1A237E"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/et_reward"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_input_blue"
+                android:hint="Contoh: Rp 25.000.000 atau Pendanaan Sesuai Skema"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -420,13 +418,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_input_blue"
-                android:hint="Pilih Tanggal Batas Akhir..."
-                android:padding="16dp"
-                android:textSize="14sp"
-                android:focusable="false"
                 android:clickable="true"
+                android:focusable="false"
+                android:hint="Pilih Tanggal Batas Akhir..."
                 android:importantForAutofill="no"
-                android:inputType="none" />
+                android:inputType="none"
+                android:padding="16dp"
+                android:textSize="14sp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

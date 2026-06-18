@@ -1,11 +1,15 @@
 package com.example.finalprojectinnobridge.perusahaan
 
+import android.app.AlertDialog
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -28,8 +32,17 @@ class AddChallengeFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: ChallengeViewModel by viewModels()
 
-    // Variabel untuk menampung target SDG yang dipilih oleh perusahaan
     private var selectedSdg: String = ""
+    private var selectedImageUri: Uri? = null
+
+    // Launcher untuk mengambil foto dari galeri/kamera
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            selectedImageUri = it
+            binding.ivChallengePreview.setImageURI(it)
+            binding.ivChallengePreview.imageTintList = null // Menghapus tint abu-abu placeholder
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,7 +55,8 @@ class AddChallengeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Inisialisasi fitur klik tambahan
+        setupImagePicker()
+        setupTargetParticipantChips()
         setupSdgSelection()
         setupDatePicker()
 
@@ -51,47 +65,44 @@ class AddChallengeFragment : Fragment() {
             val deskripsi = binding.etDeskripsi.text.toString().trim()
             val latarBelakang = binding.etLatarBelakang.text.toString().trim()
             val deadline = binding.etDeadline.text.toString().trim()
+            val reward = binding.etReward.text.toString().trim()
 
-            // 1. Mengambil data dari ChipGroup (Target Peserta) yang aktif/ada
             val selectedChips = mutableListOf<String>()
             for (i in 0 until binding.chipGroupTarget.childCount) {
                 val chip = binding.chipGroupTarget.getChildAt(i) as? Chip
-                // Lewati chip "+" jika itu hanya tombol penambah
-                if (chip != null && chip.text != "+") {
+                if (chip != null && chip.id != R.id.chip_add_target && chip.isChecked) {
                     selectedChips.add(chip.text.toString())
                 }
             }
             val targetPeserta = selectedChips.joinToString(", ")
 
-            // 2. Mengambil data dari RadioGroup (Skema Lisensi)
-            val selectedLicenseId = binding.rgLisensi.checkedRadioButtonId
-            val skemaLisensi = if (selectedLicenseId != -1) {
-                val radioButton = binding.root.findViewById<RadioButton>(selectedLicenseId)
-                radioButton.text.toString()
+            val checkedRadioId = binding.rgLisensi.checkedRadioButtonId
+            val skemaLisensi = if (checkedRadioId != -1) {
+                val radioButton = binding.root.findViewById<RadioButton>(checkedRadioId)
+                radioButton?.text?.toString() ?: ""
             } else {
                 ""
             }
 
-            // Validasi Input secara menyeluruh termasuk SDG dan Deadline
-            if (judul.isEmpty() || deskripsi.isEmpty() || latarBelakang.isEmpty() ||
-                targetPeserta.isEmpty() || selectedSdg.isEmpty() || skemaLisensi.isEmpty() || deadline.isEmpty()) {
-                Toast.makeText(requireContext(), "Harap isi semua field, pilih target SDG, dan tanggal deadline", Toast.LENGTH_SHORT).show()
+            if (judul.isEmpty()) {
+                Toast.makeText(requireContext(), "Judul wajib diisi", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             val userId = SessionManager(requireContext()).getUserId() ?: ""
 
-            // Membuat objek Challenge baru yang membawa data SDG dan Deadline asli
+            // imageUrl dikirim sebagai string URI (di aplikasi asli sebaiknya upload ke Firebase Storage dulu)
             val challenge = Challenge(
                 judul = judul,
                 deskripsi = "$deskripsi\n\nLatar Belakang: $latarBelakang",
                 targetPeserta = targetPeserta,
-                kategori = selectedSdg, // Otomatis terisi string seperti "SDG 7", "SDG 9", dll.
+                kategori = selectedSdg,
                 skemaLisensi = skemaLisensi,
-                reward = "Sesuai Skema",
-                deadline = deadline, // Tanggal hasil pick kalender (contoh: "25 Juni 2026")
+                reward = reward,
+                deadline = deadline,
                 perusahaanId = userId,
-                status = Constants.STATUS_AKTIF
+                status = Constants.STATUS_AKTIF,
+                imageUrl = selectedImageUri?.toString() ?: ""
             )
 
             viewModel.addChallenge(challenge) { success, message ->
@@ -105,49 +116,78 @@ class AddChallengeFragment : Fragment() {
         }
     }
 
-    /**
-     * Mengatur sistem pemilihan grid target SDGs secara interaktif
-     */
+    private fun setupImagePicker() {
+        binding.cardImagePicker.setOnClickListener {
+            // Membuka pemilih gambar sistem
+            imagePickerLauncher.launch("image/*")
+        }
+    }
+
+    private fun setupTargetParticipantChips() {
+        val childCount = binding.chipGroupTarget.childCount
+        val viewsToRemove = mutableListOf<View>()
+        for (i in 0 until childCount) {
+            val view = binding.chipGroupTarget.getChildAt(i)
+            if (view.id != R.id.chip_add_target) {
+                viewsToRemove.add(view)
+            }
+        }
+        viewsToRemove.forEach { binding.chipGroupTarget.removeView(it) }
+
+        binding.chipAddTarget.setOnClickListener {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Tambah Target Peserta Baru")
+            val input = EditText(requireContext())
+            input.hint = "Contoh: S1 Teknik Informatika"
+            builder.setView(input)
+            builder.setPositiveButton("Tambah") { dialog, _ ->
+                val newTargetText = input.text.toString().trim()
+                if (newTargetText.isNotEmpty()) {
+                    val newChip = Chip(requireContext()).apply {
+                        text = newTargetText
+                        isCheckable = true
+                        isChecked = true
+                        isCloseIconVisible = true
+                        setChipBackgroundColorResource(R.color.background_light)
+                        setTextColor(ContextCompat.getColor(requireContext(), R.color.text_navy))
+                        setOnCloseIconClickListener { binding.chipGroupTarget.removeView(this) }
+                    }
+                    val currentIndex = binding.chipGroupTarget.childCount - 1
+                    binding.chipGroupTarget.addView(newChip, currentIndex)
+                }
+                dialog.dismiss()
+            }
+            builder.setNegativeButton("Batal") { dialog, _ -> dialog.cancel() }
+            builder.show()
+        }
+    }
+
     private fun setupSdgSelection() {
         val cards = listOf(binding.cardSdg7, binding.cardSdg9, binding.cardSdg11, binding.cardSdg14)
         val sdgLabels = listOf("SDG 7", "SDG 9", "SDG 11", "SDG 14")
-
         cards.forEachIndexed { index, cardView ->
             cardView.setOnClickListener {
                 selectedSdg = sdgLabels[index]
-
-                // Kembalikan semua warna border kartu ke default (abu-abu terang)
                 cards.forEach { card ->
                     card.strokeColor = ContextCompat.getColor(requireContext(), R.color.divider_color)
-                    card.strokeWidth = 2 // ketebalan 1dp dalam satuan pixel
+                    card.strokeWidth = 2
                 }
-
-                // Highlight border kartu yang baru saja diklik menjadi biru utama aplikasi
                 cardView.strokeColor = ContextCompat.getColor(requireContext(), R.color.primary_blue)
-                cardView.strokeWidth = 4 // Tebalkan border agar perubahan terlihat jelas
-
-                Toast.makeText(requireContext(), "$selectedSdg Terpilih", Toast.LENGTH_SHORT).show()
+                cardView.strokeWidth = 4
             }
         }
     }
 
-    /**
-     * Membuka Dialog Kalender Material secara Native saat field deadline disentuh
-     */
     private fun setupDatePicker() {
         binding.etDeadline.setOnClickListener {
             val datePicker = MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Pilih Batas Akhir Tantangan")
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
-
             datePicker.addOnPositiveButtonClickListener { selection ->
-                // Format tanggal Indonesia: dd MMMM yyyy (Contoh: 16 Juni 2026)
                 val formatter = SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID"))
-                val calendarDate = Date(selection)
-                binding.etDeadline.setText(formatter.format(calendarDate))
+                binding.etDeadline.setText(formatter.format(Date(selection)))
             }
-
             datePicker.show(parentFragmentManager, "DATE_PICKER")
         }
     }

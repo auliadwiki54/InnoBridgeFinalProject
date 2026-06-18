@@ -133,7 +133,13 @@ class LogInFragment : Fragment() {
                 val user = viewModel.user.value
                 if (user != null) {
                     if (user.role == selectedRole) {
-                        SessionManager(requireContext()).saveSession(user.uid, user.role)
+                        // 🌟 FIX: Memakai user.nama sesuai rancangan model data class User Anda
+                        SessionManager(requireContext()).saveSession(
+                            userId = user.uid,
+                            role = user.role,
+                            name = if (user.nama.isBlank()) "Ino Sinom" else user.nama,
+                            email = if (user.email.isBlank()) email else user.email
+                        )
                         (activity as? MainActivity)?.updateBottomNavigation()
                         navigateToDashboard(user.role)
                     } else {
@@ -161,23 +167,32 @@ class LogInFragment : Fragment() {
             try {
                 binding.btnGoogle.isEnabled = false
                 binding.progressBar.visibility = View.VISIBLE
-                
+
                 val result = credentialManager.getCredential(
                     request = request,
                     context = requireContext(),
                 )
-                
+
                 val credential = result.credential
                 if (credential is GoogleIdTokenCredential) {
                     val idToken = credential.idToken
                     viewModel.signInWithGoogle(idToken, selectedRole) { success, message, role ->
                         binding.btnGoogle.isEnabled = true
                         binding.progressBar.visibility = View.GONE
-                        
+
                         if (success && role != null) {
                             val user = viewModel.user.value
                             if (user != null) {
-                                SessionManager(requireContext()).saveSession(user.uid, role)
+                                // 🌟 FIX: Sinkronisasi pemanggilan Google Sign-In menggunakan tipe String murni
+                                val googleName = credential.displayName ?: "Ino Sinom"
+                                val googleEmail = credential.id
+
+                                SessionManager(requireContext()).saveSession(
+                                    userId = user.uid,
+                                    role = role,
+                                    name = if (user.nama.isBlank()) googleName else user.nama,
+                                    email = if (user.email.isBlank()) googleEmail else user.email
+                                )
                                 (activity as? MainActivity)?.updateBottomNavigation()
                                 navigateToDashboard(role)
                             }

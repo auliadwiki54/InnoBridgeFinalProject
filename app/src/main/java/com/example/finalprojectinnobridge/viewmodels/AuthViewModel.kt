@@ -33,6 +33,17 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    fun updateUser(user: User, callback: (Boolean, String?) -> Unit) {
+        _isLoading.value = true
+        repository.saveUserData(user) { success, err ->
+            _isLoading.value = false
+            if (success) {
+                _user.value = user
+            }
+            callback(success, err)
+        }
+    }
+
     fun login(email: String, pass: String, callback: (Boolean, String?) -> Unit) {
         _isLoading.value = true
         auth.signInWithEmailAndPassword(email, pass)

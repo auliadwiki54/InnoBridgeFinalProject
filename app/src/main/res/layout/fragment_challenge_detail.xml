@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light">
+    android:background="#F8FAFF">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_navy"
@@ -17,22 +19,22 @@
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_home"
             app:navigationIconTint="@color/white"
-            app:title="Detail..."
+            app:title="Detail Tantangan"
             app:titleTextColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="80dp"
         android:clipToPadding="false"
+        android:paddingBottom="120dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -44,8 +46,8 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_badge"
                     android:backgroundTint="@color/primary_blue"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="2dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
                     android:text="Active"
                     android:textColor="@color/white"
                     android:textSize="10sp" />
@@ -56,8 +58,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:background="@drawable/bg_badge"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="2dp"
+                    android:backgroundTint="#E8EAF6"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
                     android:text="Sustainability"
                     android:textColor="@color/primary_blue"
                     android:textSize="10sp" />
@@ -67,8 +70,8 @@
                 android:id="@+id/tv_judul"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Smart City Waste\nManagement App"
+                android:layout_marginTop="16dp"
+                android:text="Smart City Waste Management App"
                 android:textColor="@color/text_navy"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -77,18 +80,20 @@
                 android:id="@+id/tv_perusahaan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="6dp"
                 android:text="EcoLogistics Ltd."
                 android:textColor="@color/text_grey"
                 android:textSize="14sp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="24dp"
+                android:layout_height="180dp"
+                android:layout_marginTop="20dp"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="0dp">
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
                 <ImageView
+                    android:id="@+id/iv_banner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
@@ -99,7 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Description"
+                android:text="Problem Statement"
                 android:textColor="@color/text_navy"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -112,7 +117,7 @@
                 android:text="Challenge description goes here..."
                 android:textColor="@color/text_grey"
                 android:textSize="14sp"
-                android:lineSpacingExtra="4dp" />
+                android:lineSpacingExtra="5dp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -138,6 +143,7 @@
                         android:textSize="14sp"
                         android:textStyle="bold" />
                     <TextView
+                        android:id="@+id/tv_lisensi_detail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
@@ -170,6 +176,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -181,7 +188,7 @@
                         android:id="@+id/tv_deadline"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="October 24, 2024"
+                        android:text="October 24, 2026"
                         android:textColor="@color/text_navy"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -206,6 +213,50 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Resources"
+                android:textColor="@color/text_navy"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btn_download_resource"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/secondary_blue"
+                app:strokeWidth="1dp">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="14dp">
+                    <ImageView
+                        android:id="@+id/iv_doc_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_innovation"
+                        app:tint="@color/primary_blue" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/iv_doc_icon"
+                        android:layout_marginStart="12dp"
+                        android:text="Sample Route Dataset.csv"
+                        android:textColor="@color/text_navy"
+                        android:textStyle="bold"
+                        android:textSize="13sp"/>
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -214,16 +265,44 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:cardCornerRadius="0dp"
-        app:cardElevation="8dp">
-        <Button
-            android:id="@+id/btn_ajukan"
-            style="@style/Widget.Material3.Button"
+        app:cardElevation="24dp"
+        app:strokeWidth="0dp"
+        app:cardBackgroundColor="@color/white">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_margin="16dp"
-            android:backgroundTint="@color/primary_navy"
-            android:text="Apply Now"
-            android:textColor="@color/white" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="28dp"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btn_chat_perusahaan"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="54dp"
+                android:layout_weight="0.6"
+                android:layout_marginEnd="10dp"
+                android:text="Chat"
+                android:textColor="@color/primary_navy"
+                android:textStyle="bold"
+                app:strokeColor="@color/primary_navy"
+                app:strokeWidth="1.5dp"
+                app:cornerRadius="14dp" />
+
+            <Button
+                android:id="@+id/btn_ajukan"
+                android:layout_width="0dp"
+                android:layout_height="54dp"
+                android:layout_weight="1.4"
+                android:backgroundTint="@color/primary_navy"
+                android:text="Apply Now"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:cornerRadius="14dp" />
+        </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

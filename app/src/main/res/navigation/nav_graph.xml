@@ -46,17 +46,27 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.finalprojectinnobridge.mahasiswa.HomeFragment"
-        android:label="Home"
+        android:label="Beranda"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_challenge_to_detail"
+            android:id="@+id/action_home_to_challenge_detail"
             app:destination="@id/navigation_challenge_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_chat"
+        android:name="com.example.finalprojectinnobridge.mahasiswa.ChatFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_chat">
+        <action
+            android:id="@+id/action_navigation_chat_to_navigation_chat_room"
+            app:destination="@id/navigation_chat_room" />
     </fragment>
 
     <fragment
         android:id="@+id/navigation_challenge"
         android:name="com.example.finalprojectinnobridge.mahasiswa.ChallengeFragment"
-        android:label="Challenges"
+        android:label="Tantangan"
         tools:layout="@layout/fragment_challenge">
         <action
             android:id="@+id/action_challenge_to_detail"
@@ -64,38 +74,40 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_challenge_detail"
-        android:name="com.example.finalprojectinnobridge.mahasiswa.ChallengeDetailFragment"
-        android:label="Challenge Detail"
-        tools:layout="@layout/fragment_challenge_detail">
+        android:id="@+id/navigation_my_proposal"
+        android:name="com.example.finalprojectinnobridge.mahasiswa.MyProposalFragment"
+        android:label="Inovasi Saya"
+        tools:layout="@layout/fragment_my_proposal">
         <action
-            android:id="@+id/action_detail_to_submit_proposal"
-            app:destination="@id/navigation_submit_proposal" />
+            android:id="@+id/action_navigation_my_proposal_to_navigation_proposal_detail"
+            app:destination="@id/navigation_proposal_detail" />
     </fragment>
-
-    <fragment
-        android:id="@+id/navigation_chat"
-        android:name="com.example.finalprojectinnobridge.mahasiswa.ChatFragment"
-        android:label="Chat"
-        tools:layout="@layout/fragment_chat" />
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.finalprojectinnobridge.mahasiswa.ProfileFragment"
-        android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+        android:label="Profil"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_navigation_profile_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_navigation_profile_to_navigation_proposal_detail"
+            app:destination="@id/navigation_proposal_detail" />
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_profile_perusahaan"
-        android:name="com.example.finalprojectinnobridge.perusahaan.ProfileFragment"
-        android:label="Profile Perusahaan"
-        tools:layout="@layout/fragment_profile" />
-
-    <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.finalprojectinnobridge.perusahaan.DashboardFragment"
-        android:label="Dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_challenge_detail"
+        android:name="com.example.finalprojectinnobridge.mahasiswa.ChallengeDetailFragment"
+        android:label="Detail Tantangan"
+        tools:layout="@layout/fragment_challenge_detail">
+        <action
+            android:id="@+id/action_detail_to_submit_proposal"
+            app:destination="@id/navigation_submit_proposal" />
+        <action
+            android:id="@+id/action_detail_to_chat_room"
+            app:destination="@id/navigation_chat_room" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_submit_proposal"
@@ -104,27 +116,120 @@
         tools:layout="@layout/fragment_submit_proposal" />
 
     <fragment
-        android:id="@+id/navigation_my_proposal"
-        android:name="com.example.finalprojectinnobridge.mahasiswa.MyProposalFragment"
-        android:label="My Proposals"
-        tools:layout="@layout/fragment_my_proposal" />
+        android:id="@+id/navigation_dashboard"
+        android:name="com.example.finalprojectinnobridge.perusahaan.DashboardFragment"
+        android:label="Dasbor"
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_dashboard_to_edit_challenge"
+            app:destination="@id/navigation_edit_challenge" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_chat_perusahaan"
+        android:name="com.example.finalprojectinnobridge.perusahaan.ChatListFragment"
+        android:label="Chat Perusahaan"
+        tools:layout="@layout/fragment_chat_list_perusahaan">
+        <action
+            android:id="@+id/action_chat_perusahaan_to_chat_room"
+            app:destination="@id/navigation_chat_room" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_add_challenge"
         android:name="com.example.finalprojectinnobridge.perusahaan.AddChallengeFragment"
-        android:label="Add Challenge"
-        tools:layout="@layout/fragment_add_challenge" />
-
-    <fragment
-        android:id="@+id/navigation_edit_challenge"
-        android:name="com.example.finalprojectinnobridge.perusahaan.EditChallengeFragment"
-        android:label="Edit Challenge"
-        tools:layout="@layout/fragment_edit_challenge" />
+        android:label="Tambah Tantangan"
+        tools:layout="@layout/fragment_add_challenge">
+        <action
+            android:id="@+id/action_add_challenge_to_proposal_list"
+            app:destination="@id/navigation_proposal_list" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_proposal_list"
         android:name="com.example.finalprojectinnobridge.perusahaan.ProposalListFragment"
-        android:label="Proposals"
-        tools:layout="@layout/fragment_proposal_list" />
+        android:label="Daftar Proposal"
+        tools:layout="@layout/fragment_proposal_list">
+        <action
+            android:id="@+id/action_navigation_proposal_list_to_navigation_proposal_detail"
+            app:destination="@id/navigation_proposal_detail" />
+        <action
+            android:id="@+id/action_navigation_proposal_list_to_navigation_give_score"
+            app:destination="@id/navigation_give_score" />
+        <action
+            android:id="@+id/action_navigation_proposal_list_to_navigation_chat_room"
+            app:destination="@id/navigation_chat_room" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_profile_perusahaan"
+        android:name="com.example.finalprojectinnobridge.perusahaan.ProfileFragment"
+        android:label="Profil Perusahaan"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_navigation_profile_perusahaan_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_edit_challenge"
+        android:name="com.example.finalprojectinnobridge.perusahaan.EditChallengeFragment"
+        android:label="Edit Tantangan"
+        tools:layout="@layout/fragment_edit_challenge">
+        <argument
+            android:name="challengeId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_chat_room"
+        android:name="com.example.finalprojectinnobridge.chat.ChatRoomFragment"
+        android:label="Ruang Chat"
+        tools:layout="@layout/fragment_chat_room">
+        <argument
+            android:name="partnerId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="partnerName"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.finalprojectinnobridge.auth.EditProfileFragment"
+        android:label="Edit Profil"
+        tools:layout="@layout/fragment_edit_profile" />
+
+    <fragment
+        android:id="@+id/navigation_proposal_detail"
+        android:name="com.example.finalprojectinnobridge.perusahaan.ProposalDetailFragment"
+        android:label="Detail Proposal"
+        tools:layout="@layout/fragment_proposal_detail">
+        <argument
+            android:name="proposalId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_give_score"
+        android:name="com.example.finalprojectinnobridge.perusahaan.GiveScoreFragment"
+        android:label="Beri Skor"
+        tools:layout="@layout/fragment_give_score">
+        <argument
+            android:name="proposalId"
+            app:argType="string" />
+        <argument
+            android:name="judul"
+            app:argType="string" />
+        <argument
+            android:name="userName"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

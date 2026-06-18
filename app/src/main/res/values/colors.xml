@@ -38,4 +38,8 @@
     <!-- Missing Colors -->
     <color name="divider_color">#E5E7EB</color>
     <color name="error">#EF4444</color>
+
+    <!-- Bottom Navigation Colors -->
+    <color name="primary_navy_light">#1A001B3D</color>  <!-- primary_navy dengan opacity ~10% untuk pill indicator -->
+    <color name="gray_inactive">#9CA3AF</color>          <!-- warna icon & teks tidak aktif -->
 </resources>

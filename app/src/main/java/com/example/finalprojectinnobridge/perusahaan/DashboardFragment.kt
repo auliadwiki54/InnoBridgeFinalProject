@@ -37,12 +37,8 @@ class DashboardFragment : Fragment() {
         setupRecyclerView()
         observeViewModel()
 
-        val userId = SessionManager(requireContext()).getUserId() ?: ""
+        // Memicu pengambilan data master tantangan dari database
         challengeViewModel.fetchChallenges()
-        
-        binding.btnAddChallenge.setOnClickListener {
-            findNavController().navigate(R.id.navigation_add_challenge)
-        }
     }
 
     private fun setupRecyclerView() {
@@ -52,6 +48,7 @@ class DashboardFragment : Fragment() {
             }
             findNavController().navigate(R.id.navigation_edit_challenge, bundle)
         }
+
         binding.rvMyChallenges.apply {
             adapter = challengeAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -60,10 +57,29 @@ class DashboardFragment : Fragment() {
 
     private fun observeViewModel() {
         val userId = SessionManager(requireContext()).getUserId() ?: ""
+
+        // Buat list penampung ID tantangan milik perusahaan ini agar bisa diakses oleh observer proposal
+        val myChallengeIds = mutableListOf<String>()
+
+        // 1. Mengamati data Tantangan (Challenges)
         challengeViewModel.challenges.observe(viewLifecycleOwner) { challenges ->
+            // Saring tantangan yang dibuat oleh ID Perusahaan yang sedang login
             val myChallenges = challenges.filter { it.perusahaanId == userId }
             challengeAdapter.updateData(myChallenges)
+
+            // Simpan semua ID tantangan milik kita ke dalam list penampung
+            myChallengeIds.clear()
+            myChallengeIds.addAll(myChallenges.map { it.challengeId })
+
+            // Set teks indikator jumlah tantangan aktif
             binding.tvActiveCount.text = myChallenges.count { it.status == "Aktif" }.toString()
+        }
+
+        // 2. Mengamati data Proposal Masuk (Menghitung Total Pelamar Berdasarkan challengeId)
+        proposalViewModel.proposals.observe(viewLifecycleOwner) { proposals ->
+            // FIX LOGIC: Hitung proposal yang nilai challengeId-nya ada di dalam daftar tantangan perusahaan kita
+            val totalApplicants = proposals.count { it.challengeId in myChallengeIds }
+            binding.tvTotalApplicantsCount.text = totalApplicants.toString()
         }
     }
 

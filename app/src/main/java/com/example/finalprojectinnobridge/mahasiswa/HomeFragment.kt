@@ -45,8 +45,14 @@ class HomeFragment : Fragment() {
             val bundle = Bundle().apply {
                 putString("challengeId", challenge.challengeId)
             }
-            // Navigasi ke detail tantangan.
-            findNavController().navigate(R.id.action_challenge_to_detail, bundle)
+
+            try {
+                // 🌟 KUNCI FIX NAVIGASI: ID Action disesuaikan dengan milik HomeFragment di nav_graph.xml
+                findNavController().navigate(R.id.action_home_to_challenge_detail, bundle)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                android.util.Log.e("NAV_ERROR", "Gagal pindah ke detail: ${e.message}")
+            }
         }
 
         // Menggunakan ID XML baru (rv_challenges) dan diatur menjadi Grid 2 Kolom
@@ -82,17 +88,24 @@ class HomeFragment : Fragment() {
     }
 
     /**
-     * Memproses filter data berdasarkan nama kategori yang dipilih.
+     * Memproses filter data berdasarkan nama kategori yang dipilih menggunakan logika lokal runtime
+     * sehingga aman tanpa perlu mengubah susunan fungsi di dalam ChallengeViewModel milikmu.
      */
     private fun handleCategoryClick(kategori: String) {
-        Toast.makeText(requireContext(), "Kategori $kategori dipilih", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Menampilkan kategori: $kategori", Toast.LENGTH_SHORT).show()
 
-        // JIKA VIEWMODEL ANDA MEMILIKI FUNGSI FILTER, AKTIFKAN LOGIKA INI:
-        // if (kategori == "Semua") {
-        //     viewModel.fetchChallenges()
-        // } else {
-        //     viewModel.fetchChallengesByCategory(kategori)
-        // }
+        val allChallenges = viewModel.challenges.value ?: emptyList()
+
+        if (kategori == "Semua") {
+            // Tampilkan kembali seluruh data tantangan tanpa filter
+            challengeAdapter.updateData(allChallenges)
+        } else {
+            // 🌟 KUNCI FIX FILTER: Melakukan filter data secara langsung berdasarkan atribut kategori
+            val filteredList = allChallenges.filter {
+                it.kategori.contains(kategori, ignoreCase = true)
+            }
+            challengeAdapter.updateData(filteredList)
+        }
     }
 
     private fun observeViewModel() {
