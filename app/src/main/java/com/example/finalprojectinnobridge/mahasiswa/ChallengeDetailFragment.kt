@@ -20,6 +20,7 @@ class ChallengeDetailFragment : Fragment() {
     private var challengeId: String? = null
 
     private var targetPerusahaanId: String = ""
+    private var targetPerusahaanName: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +33,6 @@ class ChallengeDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Mengambil kiriman data ID tantangan dari adapter beranda
         challengeId = arguments?.getString("challengeId")
 
         setupListeners()
@@ -40,7 +40,6 @@ class ChallengeDetailFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        // Tombol Ajukan Proposal
         binding.btnAjukan.setOnClickListener {
             val bundle = Bundle().apply {
                 putString("challengeId", challengeId)
@@ -48,16 +47,15 @@ class ChallengeDetailFragment : Fragment() {
             findNavController().navigate(R.id.action_detail_to_submit_proposal, bundle)
         }
 
-        // Tombol Chat Perusahaan Mitra
         binding.btnChatPerusahaan.setOnClickListener {
             if (targetPerusahaanId.isNotBlank()) {
                 val bundle = Bundle().apply {
                     putString("partnerId", targetPerusahaanId)
+                    putString("partnerName", targetPerusahaanName)
                 }
                 try {
-                    // Berpindah aman ke ruang obrolan bersama
                     findNavController().navigate(R.id.action_detail_to_chat_room, bundle)
-                } catch (e: IllegalArgumentException) {
+                } catch (e: Exception) {
                     android.util.Log.e("NAV_ERROR", "Navigasi gagal: ${e.message}")
                 }
             } else {
@@ -65,7 +63,6 @@ class ChallengeDetailFragment : Fragment() {
             }
         }
 
-        // Tombol Download Berkas Tambahan
         binding.btnDownloadResource.setOnClickListener {
             Toast.makeText(requireContext(), "Mengunduh file pendukung tantangan...", Toast.LENGTH_SHORT).show()
         }
@@ -76,14 +73,14 @@ class ChallengeDetailFragment : Fragment() {
             val challenge = challenges.find { it.challengeId == challengeId }
             challenge?.let {
                 targetPerusahaanId = it.perusahaanId.trim()
+                targetPerusahaanName = it.perusahaanName.ifEmpty { "Perusahaan" }
 
-                // Sinkronisasi data model ke komponen tampilan xml
                 binding.tvJudul.text = it.judul
                 binding.tvKategori.text = it.kategori
                 binding.tvDeskripsi.text = it.deskripsi
                 binding.tvReward.text = it.reward
                 binding.tvDeadline.text = it.deadline
-                binding.tvPerusahaan.text = "Oleh Perusahaan ID: $targetPerusahaanId"
+                binding.tvPerusahaan.text = "Oleh: $targetPerusahaanName"
                 binding.tvLisensiDetail.text = "Skema Lisensi: ${it.skemaLisensi}. Hak cipta solusi dilindungi sepenuhnya oleh sistem inovasi platform."
             }
         }

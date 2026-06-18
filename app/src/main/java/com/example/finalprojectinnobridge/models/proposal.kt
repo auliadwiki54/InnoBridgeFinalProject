@@ -11,6 +11,7 @@ data class Proposal(
     val status: String = "Pending", // Pending, Review, Diterima, Ditolak
     val tanggal: Long = System.currentTimeMillis(),
     val pitchVideo: String = "",
+    val pdfUrl: String = "", // URL to the uploaded PDF file
     val score: Int = 0,
     val evaluasi: String = ""
 )

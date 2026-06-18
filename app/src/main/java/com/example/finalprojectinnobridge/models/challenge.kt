@@ -10,6 +10,7 @@ data class Challenge(
     val reward: String = "",
     val deadline: String = "",
     val perusahaanId: String = "",
+    val perusahaanName: String = "", // Tambahan agar nama tidak "enkripsi"
     val status: String = "Aktif",
     val imageUrl: String = ""
 )

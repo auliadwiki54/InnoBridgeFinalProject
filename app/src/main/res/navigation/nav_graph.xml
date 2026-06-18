@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/fragment_splash">
+    app:startDestination="@id/fragment_login">
 
     <fragment
         android:id="@+id/fragment_splash"
@@ -112,7 +112,7 @@
     <fragment
         android:id="@+id/navigation_submit_proposal"
         android:name="com.example.finalprojectinnobridge.mahasiswa.SubmitProposalFragment"
-        android:label="Submit Proposal"
+        android:label="Kirim Proposal"
         tools:layout="@layout/fragment_submit_proposal" />
 
     <fragment
@@ -128,7 +128,7 @@
     <fragment
         android:id="@+id/navigation_chat_perusahaan"
         android:name="com.example.finalprojectinnobridge.perusahaan.ChatListFragment"
-        android:label="Chat Perusahaan"
+        android:label="Chat"
         tools:layout="@layout/fragment_chat_list_perusahaan">
         <action
             android:id="@+id/action_chat_perusahaan_to_chat_room"

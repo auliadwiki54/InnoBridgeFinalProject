@@ -89,7 +89,9 @@ class AddChallengeFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val userId = SessionManager(requireContext()).getUserId() ?: ""
+            val sessionManager = SessionManager(requireContext())
+            val userId = sessionManager.getUserId() ?: ""
+            val userName = sessionManager.getUserName() ?: ""
 
             // imageUrl dikirim sebagai string URI (di aplikasi asli sebaiknya upload ke Firebase Storage dulu)
             val challenge = Challenge(
@@ -101,6 +103,7 @@ class AddChallengeFragment : Fragment() {
                 reward = reward,
                 deadline = deadline,
                 perusahaanId = userId,
+                perusahaanName = userName, // Menyimpan nama asli perusahaan
                 status = Constants.STATUS_AKTIF,
                 imageUrl = selectedImageUri?.toString() ?: ""
             )
