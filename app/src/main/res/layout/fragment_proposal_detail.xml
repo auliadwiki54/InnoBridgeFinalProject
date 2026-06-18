@@ -113,6 +113,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
+                        android:text="Berkas Proposal (PDF)"
+                        android:textColor="@color/text_light_grey"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_view_pdf"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Buka Berkas PDF"
+                        app:icon="@drawable/ic_innovation" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
                         android:text="Pitch Video URL"
                         android:textColor="@color/text_light_grey"
                         android:textSize="12sp"

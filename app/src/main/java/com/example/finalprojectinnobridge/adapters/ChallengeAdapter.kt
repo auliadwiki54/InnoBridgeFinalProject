@@ -3,6 +3,8 @@ package com.example.finalprojectinnobridge.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.finalprojectinnobridge.R
 import com.example.finalprojectinnobridge.databinding.ItemChallengeBinding
 import com.example.finalprojectinnobridge.models.Challenge
 
@@ -21,21 +23,24 @@ class ChallengeAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
         holder.binding.apply {
-            // Mengisi data dasar ke komponen XML item_challenge
             tvKategori.text = item.kategori
             tvJudul.text = item.judul
             tvDeskripsi.text = item.deskripsi
             tvReward.text = item.reward
             tvDeadline.text = item.deadline
+            tvCompanyName.text = item.perusahaanName.ifEmpty { "Perusahaan Mitra" }
 
-            // Tambahkan pengisian data berikut jika Anda memiliki field pendukung di model data Anda:
-            // tvCompanyName.text = item.namaPerusahaan
-            // tvParticipants.text = "${item.jumlahPartisipan} Partisipan"
+            // Load Image using Glide
+            if (item.imageUrl.isNotEmpty()) {
+                Glide.with(holder.itemView.context)
+                    .load(item.imageUrl)
+                    .placeholder(R.color.secondary_blue)
+                    .into(ivCompanyLogo)
+            } else {
+                ivCompanyLogo.setImageResource(R.drawable.ic_innovation)
+            }
 
-            // Aksi klik langsung pada seluruh area kartu
             root.setOnClickListener { onItemClick(item) }
-
-            // Atau jika ingin kliknya khusus pada teks "Detail Tantangan ->"
             tvDetailLink.setOnClickListener { onItemClick(item) }
         }
     }

@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.finalprojectinnobridge.R
 import com.example.finalprojectinnobridge.databinding.FragmentAddChallengeBinding
+import com.example.finalprojectinnobridge.firebase.FirebaseManager
 import com.example.finalprojectinnobridge.models.Challenge
 import com.example.finalprojectinnobridge.utils.Constants
 import com.example.finalprojectinnobridge.utils.SessionManager
@@ -61,60 +62,93 @@ class AddChallengeFragment : Fragment() {
         setupDatePicker()
 
         binding.btnPublish.setOnClickListener {
-            val judul = binding.etJudul.text.toString().trim()
-            val deskripsi = binding.etDeskripsi.text.toString().trim()
-            val latarBelakang = binding.etLatarBelakang.text.toString().trim()
-            val deadline = binding.etDeadline.text.toString().trim()
-            val reward = binding.etReward.text.toString().trim()
+            validateAndPublish()
+        }
+    }
 
-            val selectedChips = mutableListOf<String>()
-            for (i in 0 until binding.chipGroupTarget.childCount) {
-                val chip = binding.chipGroupTarget.getChildAt(i) as? Chip
-                if (chip != null && chip.id != R.id.chip_add_target && chip.isChecked) {
-                    selectedChips.add(chip.text.toString())
-                }
+    private fun validateAndPublish() {
+        val judul = binding.etJudul.text.toString().trim()
+        val deskripsi = binding.etDeskripsi.text.toString().trim()
+        val latarBelakang = binding.etLatarBelakang.text.toString().trim()
+        val deadline = binding.etDeadline.text.toString().trim()
+        val reward = binding.etReward.text.toString().trim()
+
+        if (judul.isEmpty()) {
+            Toast.makeText(requireContext(), "Judul wajib diisi", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val sessionManager = SessionManager(requireContext())
+        val userId = sessionManager.getUserId() ?: ""
+        val userName = sessionManager.getUserName() ?: ""
+
+        val selectedChips = mutableListOf<String>()
+        for (i in 0 until binding.chipGroupTarget.childCount) {
+            val chip = binding.chipGroupTarget.getChildAt(i) as? Chip
+            if (chip != null && chip.id != R.id.chip_add_target && chip.isChecked) {
+                selectedChips.add(chip.text.toString())
             }
-            val targetPeserta = selectedChips.joinToString(", ")
+        }
+        val targetPeserta = selectedChips.joinToString(", ")
 
-            val checkedRadioId = binding.rgLisensi.checkedRadioButtonId
-            val skemaLisensi = if (checkedRadioId != -1) {
-                val radioButton = binding.root.findViewById<RadioButton>(checkedRadioId)
-                radioButton?.text?.toString() ?: ""
+        val checkedRadioId = binding.rgLisensi.checkedRadioButtonId
+        val skemaLisensi = if (checkedRadioId != -1) {
+            val radioButton = binding.root.findViewById<RadioButton>(checkedRadioId)
+            radioButton?.text?.toString() ?: ""
+        } else {
+            ""
+        }
+
+        binding.btnPublish.isEnabled = false
+        // Kita butuh ProgressBar di layout, saya asumsikan ada atau tambahkan logic loading
+        
+        if (selectedImageUri != null) {
+            uploadImageAndPublish(userId, userName, judul, deskripsi, latarBelakang, targetPeserta, skemaLisensi, reward, deadline)
+        } else {
+            publishChallenge("", userId, userName, judul, deskripsi, latarBelakang, targetPeserta, skemaLisensi, reward, deadline)
+        }
+    }
+
+    private fun uploadImageAndPublish(userId: String, userName: String, judul: String, deskripsi: String, latarBelakang: String, targetPeserta: String, skemaLisensi: String, reward: String, deadline: String) {
+        val storageRef = FirebaseManager.getInstance().storage.reference
+        val imageRef = storageRef.child("challenges/${userId}_${System.currentTimeMillis()}.jpg")
+
+        selectedImageUri?.let { uri ->
+            imageRef.putFile(uri)
+                .addOnSuccessListener {
+                    imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                        publishChallenge(downloadUri.toString(), userId, userName, judul, deskripsi, latarBelakang, targetPeserta, skemaLisensi, reward, deadline)
+                    }
+                }
+                .addOnFailureListener {
+                    binding.btnPublish.isEnabled = true
+                    Toast.makeText(requireContext(), "Gagal upload gambar: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun publishChallenge(imageUrl: String, userId: String, userName: String, judul: String, deskripsi: String, latarBelakang: String, targetPeserta: String, skemaLisensi: String, reward: String, deadline: String) {
+        val challenge = Challenge(
+            judul = judul,
+            deskripsi = "$deskripsi\n\nLatar Belakang: $latarBelakang",
+            targetPeserta = targetPeserta,
+            kategori = selectedSdg,
+            skemaLisensi = skemaLisensi,
+            reward = reward,
+            deadline = deadline,
+            perusahaanId = userId,
+            perusahaanName = userName,
+            status = Constants.STATUS_AKTIF,
+            imageUrl = imageUrl
+        )
+
+        viewModel.addChallenge(challenge) { success, message ->
+            binding.btnPublish.isEnabled = true
+            if (success) {
+                Toast.makeText(requireContext(), "Tantangan berhasil dipublikasikan", Toast.LENGTH_SHORT).show()
+                findNavController().navigateUp()
             } else {
-                ""
-            }
-
-            if (judul.isEmpty()) {
-                Toast.makeText(requireContext(), "Judul wajib diisi", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val sessionManager = SessionManager(requireContext())
-            val userId = sessionManager.getUserId() ?: ""
-            val userName = sessionManager.getUserName() ?: ""
-
-            // imageUrl dikirim sebagai string URI (di aplikasi asli sebaiknya upload ke Firebase Storage dulu)
-            val challenge = Challenge(
-                judul = judul,
-                deskripsi = "$deskripsi\n\nLatar Belakang: $latarBelakang",
-                targetPeserta = targetPeserta,
-                kategori = selectedSdg,
-                skemaLisensi = skemaLisensi,
-                reward = reward,
-                deadline = deadline,
-                perusahaanId = userId,
-                perusahaanName = userName, // Menyimpan nama asli perusahaan
-                status = Constants.STATUS_AKTIF,
-                imageUrl = selectedImageUri?.toString() ?: ""
-            )
-
-            viewModel.addChallenge(challenge) { success, message ->
-                if (success) {
-                    Toast.makeText(requireContext(), "Tantangan berhasil dipublikasikan", Toast.LENGTH_SHORT).show()
-                    findNavController().navigateUp()
-                } else {
-                    Toast.makeText(requireContext(), message ?: "Gagal mempublikasikan", Toast.LENGTH_SHORT).show()
-                }
+                Toast.makeText(requireContext(), message ?: "Gagal mempublikasikan", Toast.LENGTH_SHORT).show()
             }
         }
     }

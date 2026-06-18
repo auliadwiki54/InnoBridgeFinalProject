@@ -11,7 +11,6 @@ class MessageRepository {
     private val db = FirebaseDatabase.getInstance().reference.child("messages")
     private val listeners = mutableMapOf<String, ValueEventListener>()
 
-    // Buat chatRoomId unik dan konsisten dari dua userId
     private fun chatRoomId(userA: String, userB: String): String {
         return if (userA < userB) "${userA}_${userB}" else "${userB}_${userA}"
     }
@@ -30,11 +29,14 @@ class MessageRepository {
         receiverId: String,
         callback: (List<Message>?, String?) -> Unit
     ) {
-        // Jika receiverId kosong → ambil semua chat yang melibatkan senderId (untuk inbox)
-        if (receiverId.isEmpty()) {
-            // Gunakan listener sekali saja dengan addListenerForSingleValueEvent
-            db.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
+        val key = if (receiverId.isEmpty()) "inbox_$senderId" else "room_${chatRoomId(senderId, receiverId)}"
+        
+        // Remove existing listener for this key if any
+        listeners[key]?.let { db.removeEventListener(it) }
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (receiverId.isEmpty()) {
                     val allMessages = mutableListOf<Message>()
                     for (room in snapshot.children) {
                         for (msg in room.children) {
@@ -45,41 +47,36 @@ class MessageRepository {
                         }
                     }
                     callback(allMessages.sortedBy { it.timestamp }, null)
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    callback(null, error.message)
-                }
-            })
-        } else {
-            // Chat room spesifik antara dua user
-            val roomId = chatRoomId(senderId, receiverId)
-            db.child(roomId).addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
+                } else {
                     val messages = snapshot.children.mapNotNull {
                         it.getValue(Message::class.java)
                     }.sortedBy { it.timestamp }
                     callback(messages, null)
                 }
+            }
 
-                override fun onCancelled(error: DatabaseError) {
-                    callback(null, error.message)
-                }
-            })
+            override fun onCancelled(error: DatabaseError) {
+                callback(null, error.message)
+            }
         }
-    }
 
-    fun removeListener(senderId: String, receiverId: String) {
-        val key = "${senderId}_${receiverId}"
-        listeners[key]?.let {
-            db.removeEventListener(it)
-            listeners.remove(key)
+        if (receiverId.isEmpty()) {
+            db.addValueEventListener(listener)
+        } else {
+            db.child(chatRoomId(senderId, receiverId)).addValueEventListener(listener)
         }
+        
+        listeners[key] = listener
     }
 
     fun clearAllListeners() {
-        listeners.forEach { (_, listener) ->
-            db.removeEventListener(listener)
+        listeners.forEach { (path, listener) ->
+            if (path.startsWith("room_")) {
+                val roomId = path.removePrefix("room_")
+                db.child(roomId).removeEventListener(listener)
+            } else {
+                db.removeEventListener(listener)
+            }
         }
         listeners.clear()
     }
