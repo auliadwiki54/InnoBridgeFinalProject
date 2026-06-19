@@ -1,0 +1,1637 @@
+Index: app/src/main/java/com/example/finalprojectinnobridge/activities/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.finalprojectinnobridge.activities\r\n\r\nimport android.os.Bundle\r\nimport android.view.View\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen\r\nimport androidx.navigation.NavController\r\nimport androidx.navigation.fragment.NavHostFragment\r\nimport androidx.navigation.ui.AppBarConfiguration\r\nimport androidx.navigation.ui.navigateUp\r\nimport androidx.navigation.ui.setupActionBarWithNavController\r\nimport com.example.finalprojectinnobridge.R\r\nimport com.example.finalprojectinnobridge.databinding.ActivityMainBinding\r\nimport com.example.finalprojectinnobridge.utils.Constants\r\nimport com.example.finalprojectinnobridge.utils.SessionManager\r\n\r\nclass MainActivity : AppCompatActivity() {\r\n\r\n    private lateinit var binding: ActivityMainBinding\r\n    private lateinit var appBarConfiguration: AppBarConfiguration\r\n    private lateinit var navController: NavController\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        installSplashScreen()\r\n\r\n        super.onCreate(savedInstanceState)\r\n        binding = ActivityMainBinding.inflate(layoutInflater)\r\n        setContentView(binding.root)\r\n\r\n        setSupportActionBar(binding.toolbar)\r\n\r\n        val navHostFragment = supportFragmentManager\r\n            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment\r\n        navController = navHostFragment.navController\r\n\r\n        updateBottomNavigation()\r\n\r\n        navController.addOnDestinationChangedListener { _, destination, _ ->\r\n            val sessionManager = SessionManager(this)\r\n            val role = sessionManager.getUserRole()\r\n\r\n            val mahasiswaDestinations = setOf(\r\n                R.id.navigation_home,\r\n                R.id.navigation_chat,\r\n                R.id.navigation_challenge,\r\n                R.id.navigation_my_proposal,\r\n                R.id.navigation_profile\r\n            )\r\n\r\n            // FIX: Tambahkan navigation_chat_perusahaan agar navbar tetap muncul\r\n            val perusahaanDestinations = setOf(\r\n                R.id.navigation_dashboard,\r\n                R.id.navigation_chat_perusahaan,\r\n                R.id.navigation_add_challenge,\r\n                R.id.navigation_proposal_list,\r\n                R.id.navigation_profile_perusahaan\r\n            )\r\n\r\n            val shouldShow = when (role) {\r\n                Constants.ROLE_MAHASISWA -> destination.id in mahasiswaDestinations\r\n                Constants.ROLE_PERUSAHAAN -> destination.id in perusahaanDestinations\r\n                else -> false\r\n            }\r\n\r\n            binding.bottomNavigation?.visibility = if (shouldShow) View.VISIBLE else View.GONE\r\n            supportActionBar?.setDisplayShowTitleEnabled(!shouldShow)\r\n        }\r\n\r\n        binding.bottomNavigation?.setOnItemSelectedListener { item ->\r\n            try {\r\n                navController.navigate(item.itemId)\r\n                true\r\n            } catch (_: Exception) {\r\n                false\r\n            }\r\n        }\r\n    }\r\n\r\n    fun updateBottomNavigation() {\r\n        val sessionManager = SessionManager(this)\r\n        val role = sessionManager.getUserRole()\r\n\r\n        binding.bottomNavigation?.menu?.clear()\r\n\r\n        if (role == Constants.ROLE_MAHASISWA) {\r\n            binding.bottomNavigation?.inflateMenu(R.menu.bottom_nav_menu)\r\n            appBarConfiguration = AppBarConfiguration(\r\n                setOf(R.id.navigation_home, R.id.navigation_chat, R.id.navigation_challenge, R.id.navigation_my_proposal, R.id.navigation_profile)\r\n            )\r\n        } else if (role == Constants.ROLE_PERUSAHAAN) {\r\n            binding.bottomNavigation?.inflateMenu(R.menu.bottom_nav_menu_perusahaan)\r\n            appBarConfiguration = AppBarConfiguration(\r\n                setOf(R.id.navigation_dashboard, R.id.navigation_chat_perusahaan, R.id.navigation_add_challenge, R.id.navigation_proposal_list, R.id.navigation_profile_perusahaan)\r\n            )\r\n        } else {\r\n            appBarConfiguration = AppBarConfiguration(setOf(R.id.fragment_login, R.id.fragment_splash))\r\n        }\r\n\r\n        setupActionBarWithNavController(navController, appBarConfiguration)\r\n    }\r\n\r\n    override fun onSupportNavigateUp(): Boolean {\r\n        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/finalprojectinnobridge/activities/MainActivity.kt b/app/src/main/java/com/example/finalprojectinnobridge/activities/MainActivity.kt
+--- a/app/src/main/java/com/example/finalprojectinnobridge/activities/MainActivity.kt	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/java/com/example/finalprojectinnobridge/activities/MainActivity.kt	(date 1781777334366)
+@@ -36,8 +36,7 @@
+         updateBottomNavigation()
+ 
+         navController.addOnDestinationChangedListener { _, destination, _ ->
+-            val sessionManager = SessionManager(this)
+-            val role = sessionManager.getUserRole()
++            val role = SessionManager(this).getUserRole()
+ 
+             val mahasiswaDestinations = setOf(
+                 R.id.navigation_home,
+@@ -47,7 +46,6 @@
+                 R.id.navigation_profile
+             )
+ 
+-            // FIX: Tambahkan navigation_chat_perusahaan agar navbar tetap muncul
+             val perusahaanDestinations = setOf(
+                 R.id.navigation_dashboard,
+                 R.id.navigation_chat_perusahaan,
+@@ -62,11 +60,12 @@
+                 else -> false
+             }
+ 
+-            binding.bottomNavigation?.visibility = if (shouldShow) View.VISIBLE else View.GONE
++            binding.bottomNavContainer.visibility = if (shouldShow) View.VISIBLE else View.GONE
+             supportActionBar?.setDisplayShowTitleEnabled(!shouldShow)
+         }
+ 
+-        binding.bottomNavigation?.setOnItemSelectedListener { item ->
++        binding.bottomNavContainer.setOnItemSelectedListener { item ->
++            if (navController.currentDestination?.id == item.itemId) return@setOnItemSelectedListener true
+             try {
+                 navController.navigate(item.itemId)
+                 true
+@@ -77,23 +76,36 @@
+     }
+ 
+     fun updateBottomNavigation() {
+-        val sessionManager = SessionManager(this)
+-        val role = sessionManager.getUserRole()
++        val role = SessionManager(this).getUserRole()
+ 
+-        binding.bottomNavigation?.menu?.clear()
++        binding.bottomNavContainer.menu.clear()
+ 
+         if (role == Constants.ROLE_MAHASISWA) {
+-            binding.bottomNavigation?.inflateMenu(R.menu.bottom_nav_menu)
++            binding.bottomNavContainer.inflateMenu(R.menu.bottom_nav_menu)
+             appBarConfiguration = AppBarConfiguration(
+-                setOf(R.id.navigation_home, R.id.navigation_chat, R.id.navigation_challenge, R.id.navigation_my_proposal, R.id.navigation_profile)
++                setOf(
++                    R.id.navigation_home,
++                    R.id.navigation_chat,
++                    R.id.navigation_challenge,
++                    R.id.navigation_my_proposal,
++                    R.id.navigation_profile
++                )
+             )
+         } else if (role == Constants.ROLE_PERUSAHAAN) {
+-            binding.bottomNavigation?.inflateMenu(R.menu.bottom_nav_menu_perusahaan)
++            binding.bottomNavContainer.inflateMenu(R.menu.bottom_nav_menu_perusahaan)
+             appBarConfiguration = AppBarConfiguration(
+-                setOf(R.id.navigation_dashboard, R.id.navigation_chat_perusahaan, R.id.navigation_add_challenge, R.id.navigation_proposal_list, R.id.navigation_profile_perusahaan)
++                setOf(
++                    R.id.navigation_dashboard,
++                    R.id.navigation_chat_perusahaan,
++                    R.id.navigation_add_challenge,
++                    R.id.navigation_proposal_list,
++                    R.id.navigation_profile_perusahaan
++                )
+             )
+         } else {
+-            appBarConfiguration = AppBarConfiguration(setOf(R.id.fragment_login, R.id.fragment_splash))
++            appBarConfiguration = AppBarConfiguration(
++                setOf(R.id.fragment_login, R.id.fragment_splash)
++            )
+         }
+ 
+         setupActionBarWithNavController(navController, appBarConfiguration)
+@@ -102,4 +114,4 @@
+     override fun onSupportNavigateUp(): Boolean {
+         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+     }
+-}
+\ No newline at end of file
++}
+Index: app/src/main/java/com/example/finalprojectinnobridge/perusahaan/ChatListFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.finalprojectinnobridge.perusahaan\r\n\r\nimport android.os.Bundle\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport android.widget.Toast\r\nimport androidx.fragment.app.Fragment\r\nimport androidx.fragment.app.viewModels\r\nimport androidx.navigation.fragment.findNavController\r\nimport androidx.recyclerview.widget.LinearLayoutManager\r\nimport com.example.finalprojectinnobridge.R\r\nimport com.example.finalprojectinnobridge.adapters.ChatListAdapter\r\nimport com.example.finalprojectinnobridge.databinding.FragmentChatListPerusahaanBinding\r\nimport com.example.finalprojectinnobridge.utils.SessionManager\r\nimport com.example.finalprojectinnobridge.viewmodels.MessageViewModel\r\n\r\nclass ChatListFragment : Fragment() {\r\n\r\n    private var _binding: FragmentChatListPerusahaanBinding? = null\r\n    private val binding get() = _binding!!\r\n\r\n    private val viewModel: MessageViewModel by viewModels()\r\n    private lateinit var chatListAdapter: ChatListAdapter\r\n    private var myId: String = \"\"\r\n\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater, container: ViewGroup?,\r\n        savedInstanceState: Bundle?\r\n    ): View {\r\n        _binding = FragmentChatListPerusahaanBinding.inflate(inflater, container, false)\r\n        return binding.root\r\n    }\r\n\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        super.onViewCreated(view, savedInstanceState)\r\n\r\n        myId = SessionManager(requireContext()).getUserId() ?: \"\"\r\n\r\n        if (myId.isEmpty()) {\r\n            Toast.makeText(requireContext(), \"User ID tidak ditemukan\", Toast.LENGTH_SHORT).show()\r\n            return\r\n        }\r\n\r\n        setupRecyclerView()\r\n        observeChatInbox()\r\n    }\r\n\r\n    private fun setupRecyclerView() {\r\n        chatListAdapter = ChatListAdapter(emptyList(), myId) { partnerId, partnerName ->\r\n            if (partnerId.isEmpty()) {\r\n                Toast.makeText(requireContext(), \"ID Partner tidak valid\", Toast.LENGTH_SHORT).show()\r\n                return@ChatListAdapter\r\n            }\r\n\r\n            val bundle = Bundle().apply {\r\n                putString(\"partnerId\", partnerId)\r\n                putString(\"partnerName\", partnerName.ifEmpty { \"User ($partnerId)\" })\r\n            }\r\n            try {\r\n                findNavController().navigate(R.id.action_chat_perusahaan_to_chat_room, bundle)\r\n            } catch (e: Exception) {\r\n                Toast.makeText(requireContext(), \"Gagal membuka chat: ${e.message}\", Toast.LENGTH_SHORT).show()\r\n                e.printStackTrace()\r\n            }\r\n        }\r\n\r\n        binding.rvChatList.apply {\r\n            layoutManager = LinearLayoutManager(requireContext())\r\n            adapter = chatListAdapter\r\n        }\r\n    }\r\n\r\n    private fun observeChatInbox() {\r\n        viewModel.fetchMessages(myId, \"\")\r\n        viewModel.messages.observe(viewLifecycleOwner) { listPesan ->\r\n            if (listPesan != null && listPesan.isNotEmpty()) {\r\n                // Group messages by partner (sender or receiver)\r\n                val latestMessages = listPesan.groupBy {\r\n                    if (it.senderId == myId) it.receiverId else it.senderId\r\n                }.mapNotNull { (partnerId, messages) ->\r\n                    if (partnerId.isNotEmpty() && messages.isNotEmpty()) {\r\n                        messages.last() // Get latest message from this partner\r\n                    } else {\r\n                        null\r\n                    }\r\n                }\r\n\r\n                chatListAdapter.updateData(latestMessages)\r\n                binding.tvEmptyChat.visibility = if (latestMessages.isEmpty()) View.VISIBLE else View.GONE\r\n            } else {\r\n                binding.tvEmptyChat.visibility = View.VISIBLE\r\n            }\r\n        }\r\n\r\n        viewModel.error.observe(viewLifecycleOwner) { error ->\r\n            error?.let {\r\n                Toast.makeText(requireContext(), \"Error: $it\", Toast.LENGTH_SHORT).show()\r\n            }\r\n        }\r\n    }\r\n\r\n    override fun onDestroyView() {\r\n        super.onDestroyView()\r\n        _binding = null\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/finalprojectinnobridge/perusahaan/ChatListFragment.kt b/app/src/main/java/com/example/finalprojectinnobridge/perusahaan/ChatListFragment.kt
+--- a/app/src/main/java/com/example/finalprojectinnobridge/perusahaan/ChatListFragment.kt	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/java/com/example/finalprojectinnobridge/perusahaan/ChatListFragment.kt	(date 1781776084188)
+@@ -5,6 +5,7 @@
+ import android.view.View
+ import android.view.ViewGroup
+ import android.widget.Toast
++import androidx.core.os.bundleOf
+ import androidx.fragment.app.Fragment
+ import androidx.fragment.app.viewModels
+ import androidx.navigation.fragment.findNavController
+@@ -53,49 +54,58 @@
+                 return@ChatListAdapter
+             }
+ 
+-            val bundle = Bundle().apply {
+-                putString("partnerId", partnerId)
+-                putString("partnerName", partnerName.ifEmpty { "User ($partnerId)" })
+-            }
++            val bundle = bundleOf(
++                "partnerId" to partnerId,
++                "partnerName" to partnerName.ifEmpty { "User ($partnerId)" }
++            )
++
+             try {
+                 findNavController().navigate(R.id.action_chat_perusahaan_to_chat_room, bundle)
+             } catch (e: Exception) {
+                 Toast.makeText(requireContext(), "Gagal membuka chat: ${e.message}", Toast.LENGTH_SHORT).show()
+-                e.printStackTrace()
+             }
+         }
+ 
+         binding.rvChatList.apply {
+             layoutManager = LinearLayoutManager(requireContext())
+             adapter = chatListAdapter
++            clipToPadding = false
++            setPadding(0, 0, 0, resources.getDimensionPixelOffset(R.dimen.chat_list_bottom_padding))
+         }
+     }
+ 
+     private fun observeChatInbox() {
++        // Tampilkan loading state
++        binding.layoutEmptyChat.visibility = View.GONE
++
+         viewModel.fetchMessages(myId, "")
++
+         viewModel.messages.observe(viewLifecycleOwner) { listPesan ->
+-            if (listPesan != null && listPesan.isNotEmpty()) {
+-                // Group messages by partner (sender or receiver)
+-                val latestMessages = listPesan.groupBy {
+-                    if (it.senderId == myId) it.receiverId else it.senderId
+-                }.mapNotNull { (partnerId, messages) ->
+-                    if (partnerId.isNotEmpty() && messages.isNotEmpty()) {
+-                        messages.last() // Get latest message from this partner
+-                    } else {
+-                        null
+-                    }
++            if (listPesan.isNullOrEmpty()) {
++                chatListAdapter.updateData(emptyList())
++                binding.layoutEmptyChat.visibility = View.VISIBLE
++                return@observe
++            }
++
++            // Group by partner, ambil pesan terbaru per partner
++            val latestMessages = listPesan
++                .groupBy { msg ->
++                    if (msg.senderId == myId) msg.receiverId else msg.senderId
+                 }
++                .mapNotNull { (partnerId, messages) ->
++                    if (partnerId.isNotEmpty()) messages.maxByOrNull { it.timestamp }
++                    else null
++                }
++                .sortedByDescending { it.timestamp } // Terbaru di atas
+ 
+-                chatListAdapter.updateData(latestMessages)
+-                binding.tvEmptyChat.visibility = if (latestMessages.isEmpty()) View.VISIBLE else View.GONE
+-            } else {
+-                binding.tvEmptyChat.visibility = View.VISIBLE
+-            }
++            chatListAdapter.updateData(latestMessages)
++            binding.layoutEmptyChat.visibility = if (latestMessages.isEmpty()) View.VISIBLE else View.GONE
+         }
+ 
+         viewModel.error.observe(viewLifecycleOwner) { error ->
+             error?.let {
+-                Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
++                Toast.makeText(requireContext(), "Gagal memuat chat: $it", Toast.LENGTH_SHORT).show()
++                binding.layoutEmptyChat.visibility = View.VISIBLE
+             }
+         }
+     }
+@@ -104,4 +114,4 @@
+         super.onDestroyView()
+         _binding = null
+     }
+-}
+\ No newline at end of file
++}
+Index: app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChallengeDetailFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.finalprojectinnobridge.mahasiswa\r\n\r\nimport android.os.Bundle\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport android.widget.Toast\r\nimport androidx.fragment.app.Fragment\r\nimport androidx.fragment.app.viewModels\r\nimport androidx.navigation.fragment.findNavController\r\nimport com.example.finalprojectinnobridge.R\r\nimport com.example.finalprojectinnobridge.databinding.FragmentChallengeDetailBinding\r\nimport com.example.finalprojectinnobridge.viewmodels.ChallengeViewModel\r\n\r\nclass ChallengeDetailFragment : Fragment() {\r\n\r\n    private var _binding: FragmentChallengeDetailBinding? = null\r\n    private val binding get() = _binding!!\r\n    private val viewModel: ChallengeViewModel by viewModels()\r\n    private var challengeId: String? = null\r\n\r\n    private var targetPerusahaanId: String = \"\"\r\n\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater, container: ViewGroup?,\r\n        savedInstanceState: Bundle?\r\n    ): View {\r\n        _binding = FragmentChallengeDetailBinding.inflate(inflater, container, false)\r\n        return binding.root\r\n    }\r\n\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        super.onViewCreated(view, savedInstanceState)\r\n\r\n        // Mengambil kiriman data ID tantangan dari adapter beranda\r\n        challengeId = arguments?.getString(\"challengeId\")\r\n\r\n        setupListeners()\r\n        observeViewModel()\r\n    }\r\n\r\n    private fun setupListeners() {\r\n        // Tombol Ajukan Proposal\r\n        binding.btnAjukan.setOnClickListener {\r\n            val bundle = Bundle().apply {\r\n                putString(\"challengeId\", challengeId)\r\n            }\r\n            findNavController().navigate(R.id.action_detail_to_submit_proposal, bundle)\r\n        }\r\n\r\n        // Tombol Chat Perusahaan Mitra\r\n        binding.btnChatPerusahaan.setOnClickListener {\r\n            if (targetPerusahaanId.isNotBlank()) {\r\n                val bundle = Bundle().apply {\r\n                    putString(\"partnerId\", targetPerusahaanId)\r\n                }\r\n                try {\r\n                    // Berpindah aman ke ruang obrolan bersama\r\n                    findNavController().navigate(R.id.action_detail_to_chat_room, bundle)\r\n                } catch (e: IllegalArgumentException) {\r\n                    android.util.Log.e(\"NAV_ERROR\", \"Navigasi gagal: ${e.message}\")\r\n                }\r\n            } else {\r\n                Toast.makeText(requireContext(), \"Mohon tunggu, data mitra sedang dimuat...\", Toast.LENGTH_SHORT).show()\r\n            }\r\n        }\r\n\r\n        // Tombol Download Berkas Tambahan\r\n        binding.btnDownloadResource.setOnClickListener {\r\n            Toast.makeText(requireContext(), \"Mengunduh file pendukung tantangan...\", Toast.LENGTH_SHORT).show()\r\n        }\r\n    }\r\n\r\n    private fun observeViewModel() {\r\n        viewModel.challenges.observe(viewLifecycleOwner) { challenges ->\r\n            val challenge = challenges.find { it.challengeId == challengeId }\r\n            challenge?.let {\r\n                targetPerusahaanId = it.perusahaanId.trim()\r\n\r\n                // Sinkronisasi data model ke komponen tampilan xml\r\n                binding.tvJudul.text = it.judul\r\n                binding.tvKategori.text = it.kategori\r\n                binding.tvDeskripsi.text = it.deskripsi\r\n                binding.tvReward.text = it.reward\r\n                binding.tvDeadline.text = it.deadline\r\n                binding.tvPerusahaan.text = \"Oleh Perusahaan ID: $targetPerusahaanId\"\r\n                binding.tvLisensiDetail.text = \"Skema Lisensi: ${it.skemaLisensi}. Hak cipta solusi dilindungi sepenuhnya oleh sistem inovasi platform.\"\r\n            }\r\n        }\r\n        viewModel.fetchChallenges()\r\n    }\r\n\r\n    override fun onDestroyView() {\r\n        super.onDestroyView()\r\n        _binding = null\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChallengeDetailFragment.kt b/app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChallengeDetailFragment.kt
+--- a/app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChallengeDetailFragment.kt	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChallengeDetailFragment.kt	(date 1781778375987)
+@@ -20,6 +20,7 @@
+     private var challengeId: String? = null
+ 
+     private var targetPerusahaanId: String = ""
++    private var targetPerusahaanName: String = ""
+ 
+     override fun onCreateView(
+         inflater: LayoutInflater, container: ViewGroup?,
+@@ -53,12 +54,12 @@
+             if (targetPerusahaanId.isNotBlank()) {
+                 val bundle = Bundle().apply {
+                     putString("partnerId", targetPerusahaanId)
++                    putString("partnerName", targetPerusahaanName.ifEmpty { "Perusahaan" })
+                 }
+                 try {
+-                    // Berpindah aman ke ruang obrolan bersama
+                     findNavController().navigate(R.id.action_detail_to_chat_room, bundle)
+-                } catch (e: IllegalArgumentException) {
+-                    android.util.Log.e("NAV_ERROR", "Navigasi gagal: ${e.message}")
++                } catch (e: Exception) {
++                    Toast.makeText(requireContext(), "Gagal membuka chat", Toast.LENGTH_SHORT).show()
+                 }
+             } else {
+                 Toast.makeText(requireContext(), "Mohon tunggu, data mitra sedang dimuat...", Toast.LENGTH_SHORT).show()
+@@ -76,6 +77,7 @@
+             val challenge = challenges.find { it.challengeId == challengeId }
+             challenge?.let {
+                 targetPerusahaanId = it.perusahaanId.trim()
++                targetPerusahaanName = it.judul.trim() // Gunakan judul challenge sebagai nama konteks
+ 
+                 // Sinkronisasi data model ke komponen tampilan xml
+                 binding.tvJudul.text = it.judul
+Index: app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChatFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.finalprojectinnobridge.mahasiswa\r\n\r\nimport android.os.Bundle\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport android.widget.Toast\r\nimport androidx.fragment.app.Fragment\r\nimport androidx.fragment.app.viewModels\r\nimport androidx.navigation.fragment.findNavController\r\nimport androidx.recyclerview.widget.LinearLayoutManager\r\nimport com.example.finalprojectinnobridge.R\r\nimport com.example.finalprojectinnobridge.adapters.ChatListAdapter\r\nimport com.example.finalprojectinnobridge.databinding.FragmentChatBinding\r\nimport com.example.finalprojectinnobridge.utils.SessionManager\r\nimport com.example.finalprojectinnobridge.viewmodels.MessageViewModel\r\n\r\nclass ChatFragment : Fragment() {\r\n\r\n    private var _binding: FragmentChatBinding? = null\r\n    private val binding get() = _binding!!\r\n\r\n    private val viewModel: MessageViewModel by viewModels()\r\n    private lateinit var chatListAdapter: ChatListAdapter\r\n    private var myId: String = \"\"\r\n\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater, container: ViewGroup?,\r\n        savedInstanceState: Bundle?\r\n    ): View {\r\n        _binding = FragmentChatBinding.inflate(inflater, container, false)\r\n        return binding.root\r\n    }\r\n\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        super.onViewCreated(view, savedInstanceState)\r\n\r\n        myId = SessionManager(requireContext()).getUserId() ?: \"\"\r\n\r\n        if (myId.isEmpty()) {\r\n            Toast.makeText(requireContext(), \"User ID tidak ditemukan\", Toast.LENGTH_SHORT).show()\r\n            return\r\n        }\r\n\r\n        setupRecyclerView()\r\n        observeChatInbox()\r\n    }\r\n\r\n    private fun setupRecyclerView() {\r\n        chatListAdapter = ChatListAdapter(emptyList(), myId) { partnerId, partnerName ->\r\n            if (partnerId.isEmpty()) {\r\n                Toast.makeText(requireContext(), \"ID Partner tidak valid\", Toast.LENGTH_SHORT).show()\r\n                return@ChatListAdapter\r\n            }\r\n\r\n            val bundle = Bundle().apply {\r\n                putString(\"partnerId\", partnerId)\r\n                putString(\"partnerName\", partnerName.ifEmpty { \"User ($partnerId)\" })\r\n            }\r\n            try {\r\n                findNavController().navigate(R.id.action_navigation_chat_to_navigation_chat_room, bundle)\r\n            } catch (e: Exception) {\r\n                Toast.makeText(requireContext(), \"Gagal membuka chat: ${e.message}\", Toast.LENGTH_SHORT).show()\r\n                e.printStackTrace()\r\n            }\r\n        }\r\n\r\n        binding.rvChatList.apply {\r\n            layoutManager = LinearLayoutManager(requireContext())\r\n            adapter = chatListAdapter\r\n        }\r\n    }\r\n\r\n    private fun observeChatInbox() {\r\n        viewModel.fetchMessages(myId, \"\")\r\n        viewModel.messages.observe(viewLifecycleOwner) { listPesan ->\r\n            if (listPesan != null && listPesan.isNotEmpty()) {\r\n                // Group messages by partner (sender or receiver)\r\n                val latestMessages = listPesan.groupBy {\r\n                    if (it.senderId == myId) it.receiverId else it.senderId\r\n                }.mapNotNull { (partnerId, messages) ->\r\n                    if (partnerId.isNotEmpty() && messages.isNotEmpty()) {\r\n                        messages.last() // Get latest message from this partner\r\n                    } else {\r\n                        null\r\n                    }\r\n                }\r\n\r\n                chatListAdapter.updateData(latestMessages)\r\n                binding.rvChatList.visibility = if (latestMessages.isEmpty()) View.GONE else View.VISIBLE\r\n            } else {\r\n                binding.rvChatList.visibility = View.GONE\r\n            }\r\n        }\r\n\r\n        viewModel.error.observe(viewLifecycleOwner) { error ->\r\n            error?.let {\r\n                Toast.makeText(requireContext(), \"Error: $it\", Toast.LENGTH_SHORT).show()\r\n            }\r\n        }\r\n    }\r\n\r\n    override fun onDestroyView() {\r\n        super.onDestroyView()\r\n        _binding = null\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChatFragment.kt b/app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChatFragment.kt
+--- a/app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChatFragment.kt	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChatFragment.kt	(date 1781771602169)
+@@ -80,7 +80,7 @@
+                     if (it.senderId == myId) it.receiverId else it.senderId
+                 }.mapNotNull { (partnerId, messages) ->
+                     if (partnerId.isNotEmpty() && messages.isNotEmpty()) {
+-                        messages.last() // Get latest message from this partner
++                        messages.maxByOrNull { it.timestamp } // Pesan terbaru dari partner ini
+                     } else {
+                         null
+                     }
+Index: app/src/main/res/menu/bottom_nav_menu_perusahaan.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<menu xmlns:android=\"http://schemas.android.com/apk/res/android\">\r\n\r\n    <item\r\n        android:id=\"@+id/navigation_dashboard\"\r\n        android:icon=\"@drawable/ic_home\"\r\n        android:title=\"Dasbor\" />\r\n\r\n    <item\r\n        android:id=\"@+id/navigation_chat_perusahaan\"\r\n        android:icon=\"@drawable/ic_chat\"\r\n        android:title=\"Chat\" />\r\n\r\n    <item\r\n        android:id=\"@+id/navigation_add_challenge\"\r\n        android:icon=\"@drawable/ic_add\"\r\n        android:title=\"Tantangan\" />\r\n\r\n    <item\r\n        android:id=\"@+id/navigation_proposal_list\"\r\n        android:icon=\"@drawable/ic_challenge\"\r\n        android:title=\"Proposal\" />\r\n\r\n    <item\r\n        android:id=\"@+id/navigation_profile_perusahaan\"\r\n        android:icon=\"@drawable/ic_profile\"\r\n        android:title=\"Profil\" />\r\n\r\n</menu>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/menu/bottom_nav_menu_perusahaan.xml b/app/src/main/res/menu/bottom_nav_menu_perusahaan.xml
+--- a/app/src/main/res/menu/bottom_nav_menu_perusahaan.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/menu/bottom_nav_menu_perusahaan.xml	(date 1781774921454)
+@@ -26,4 +26,4 @@
+         android:icon="@drawable/ic_profile"
+         android:title="Profil" />
+ 
+-</menu>
+\ No newline at end of file
++</menu>
+Index: app/src/main/res/menu/bottom_nav_menu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<menu xmlns:android=\"http://schemas.android.com/apk/res/android\">\r\n\r\n    <item\r\n        android:id=\"@+id/navigation_home\"\r\n        android:icon=\"@drawable/ic_home\"\r\n        android:title=\"Beranda\" />\r\n\r\n    <item\r\n        android:id=\"@+id/navigation_chat\"\r\n        android:icon=\"@drawable/ic_chat\"\r\n        android:title=\"Chat\" />\r\n\r\n    <item\r\n        android:id=\"@+id/navigation_challenge\"\r\n        android:icon=\"@drawable/ic_add\"\r\n        android:title=\"Tantangan\" />\r\n\r\n    <item\r\n        android:id=\"@+id/navigation_my_proposal\"\r\n        android:icon=\"@drawable/ic_innovation\"\r\n        android:title=\"Inovasi\" />\r\n\r\n    <item\r\n        android:id=\"@+id/navigation_profile\"\r\n        android:icon=\"@drawable/ic_profile\"\r\n        android:title=\"Profil\" />\r\n\r\n</menu>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/menu/bottom_nav_menu.xml b/app/src/main/res/menu/bottom_nav_menu.xml
+--- a/app/src/main/res/menu/bottom_nav_menu.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/menu/bottom_nav_menu.xml	(date 1781774912922)
+@@ -13,7 +13,7 @@
+ 
+     <item
+         android:id="@+id/navigation_challenge"
+-        android:icon="@drawable/ic_add"
++        android:icon="@drawable/ic_challenge"
+         android:title="Tantangan" />
+ 
+     <item
+@@ -26,4 +26,4 @@
+         android:icon="@drawable/ic_profile"
+         android:title="Profil" />
+ 
+-</menu>
+\ No newline at end of file
++</menu>
+Index: app/src/main/java/com/example/finalprojectinnobridge/repositories/MessageRepository.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.finalprojectinnobridge.repositories\r\n\r\nimport com.example.finalprojectinnobridge.models.Message\r\nimport com.google.firebase.database.DataSnapshot\r\nimport com.google.firebase.database.DatabaseError\r\nimport com.google.firebase.database.FirebaseDatabase\r\nimport com.google.firebase.database.ValueEventListener\r\n\r\nclass MessageRepository {\r\n\r\n    private val db = FirebaseDatabase.getInstance().reference.child(\"messages\")\r\n    private val listeners = mutableMapOf<String, ValueEventListener>()\r\n\r\n    // Buat chatRoomId unik dan konsisten dari dua userId\r\n    private fun chatRoomId(userA: String, userB: String): String {\r\n        return if (userA < userB) \"${userA}_${userB}\" else \"${userB}_${userA}\"\r\n    }\r\n\r\n    fun sendMessage(message: Message, callback: (Boolean, String?) -> Unit) {\r\n        val roomId = chatRoomId(message.senderId, message.receiverId)\r\n        val ref = db.child(roomId).push()\r\n        val msgWithId = message.copy(messageId = ref.key ?: \"\")\r\n        ref.setValue(msgWithId)\r\n            .addOnSuccessListener { callback(true, null) }\r\n            .addOnFailureListener { callback(false, it.message) }\r\n    }\r\n\r\n    fun getMessages(\r\n        senderId: String,\r\n        receiverId: String,\r\n        callback: (List<Message>?, String?) -> Unit\r\n    ) {\r\n        // Jika receiverId kosong → ambil semua chat yang melibatkan senderId (untuk inbox)\r\n        if (receiverId.isEmpty()) {\r\n            // Gunakan listener sekali saja dengan addListenerForSingleValueEvent\r\n            db.addListenerForSingleValueEvent(object : ValueEventListener {\r\n                override fun onDataChange(snapshot: DataSnapshot) {\r\n                    val allMessages = mutableListOf<Message>()\r\n                    for (room in snapshot.children) {\r\n                        for (msg in room.children) {\r\n                            val m = msg.getValue(Message::class.java) ?: continue\r\n                            if (m.senderId == senderId || m.receiverId == senderId) {\r\n                                allMessages.add(m)\r\n                            }\r\n                        }\r\n                    }\r\n                    callback(allMessages.sortedBy { it.timestamp }, null)\r\n                }\r\n\r\n                override fun onCancelled(error: DatabaseError) {\r\n                    callback(null, error.message)\r\n                }\r\n            })\r\n        } else {\r\n            // Chat room spesifik antara dua user\r\n            val roomId = chatRoomId(senderId, receiverId)\r\n            db.child(roomId).addValueEventListener(object : ValueEventListener {\r\n                override fun onDataChange(snapshot: DataSnapshot) {\r\n                    val messages = snapshot.children.mapNotNull {\r\n                        it.getValue(Message::class.java)\r\n                    }.sortedBy { it.timestamp }\r\n                    callback(messages, null)\r\n                }\r\n\r\n                override fun onCancelled(error: DatabaseError) {\r\n                    callback(null, error.message)\r\n                }\r\n            })\r\n        }\r\n    }\r\n\r\n    fun removeListener(senderId: String, receiverId: String) {\r\n        val key = \"${senderId}_${receiverId}\"\r\n        listeners[key]?.let {\r\n            db.removeEventListener(it)\r\n            listeners.remove(key)\r\n        }\r\n    }\r\n\r\n    fun clearAllListeners() {\r\n        listeners.forEach { (_, listener) ->\r\n            db.removeEventListener(listener)\r\n        }\r\n        listeners.clear()\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/finalprojectinnobridge/repositories/MessageRepository.kt b/app/src/main/java/com/example/finalprojectinnobridge/repositories/MessageRepository.kt
+--- a/app/src/main/java/com/example/finalprojectinnobridge/repositories/MessageRepository.kt	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/java/com/example/finalprojectinnobridge/repositories/MessageRepository.kt	(date 1781771581933)
+@@ -9,7 +9,9 @@
+ class MessageRepository {
+ 
+     private val db = FirebaseDatabase.getInstance().reference.child("messages")
+-    private val listeners = mutableMapOf<String, ValueEventListener>()
++
++    // Map key → (dbPath, listener) agar bisa di-remove dengan benar
++    private val listeners = mutableMapOf<String, Pair<com.google.firebase.database.DatabaseReference, ValueEventListener>>()
+ 
+     // Buat chatRoomId unik dan konsisten dari dua userId
+     private fun chatRoomId(userA: String, userB: String): String {
+@@ -30,10 +32,13 @@
+         receiverId: String,
+         callback: (List<Message>?, String?) -> Unit
+     ) {
+-        // Jika receiverId kosong → ambil semua chat yang melibatkan senderId (untuk inbox)
+         if (receiverId.isEmpty()) {
+-            // Gunakan listener sekali saja dengan addListenerForSingleValueEvent
+-            db.addListenerForSingleValueEvent(object : ValueEventListener {
++            // Inbox mode: real-time listener untuk semua chat yang melibatkan senderId
++            val key = "inbox_$senderId"
++            // Hapus listener lama jika ada
++            removeListenerByKey(key)
++
++            val listener = object : ValueEventListener {
+                 override fun onDataChange(snapshot: DataSnapshot) {
+                     val allMessages = mutableListOf<Message>()
+                     for (room in snapshot.children) {
+@@ -50,11 +55,18 @@
+                 override fun onCancelled(error: DatabaseError) {
+                     callback(null, error.message)
+                 }
+-            })
++            }
++            db.addValueEventListener(listener)
++            listeners[key] = Pair(db, listener)
+         } else {
+             // Chat room spesifik antara dua user
+             val roomId = chatRoomId(senderId, receiverId)
+-            db.child(roomId).addValueEventListener(object : ValueEventListener {
++            val key = roomId
++            // Hapus listener lama untuk room yang sama jika ada
++            removeListenerByKey(key)
++
++            val ref = db.child(roomId)
++            val listener = object : ValueEventListener {
+                 override fun onDataChange(snapshot: DataSnapshot) {
+                     val messages = snapshot.children.mapNotNull {
+                         it.getValue(Message::class.java)
+@@ -65,21 +77,27 @@
+                 override fun onCancelled(error: DatabaseError) {
+                     callback(null, error.message)
+                 }
+-            })
++            }
++            ref.addValueEventListener(listener)
++            listeners[key] = Pair(ref, listener)
+         }
+     }
+ 
+-    fun removeListener(senderId: String, receiverId: String) {
+-        val key = "${senderId}_${receiverId}"
+-        listeners[key]?.let {
+-            db.removeEventListener(it)
++    private fun removeListenerByKey(key: String) {
++        listeners[key]?.let { (ref, listener) ->
++            ref.removeEventListener(listener)
+             listeners.remove(key)
+         }
+     }
+ 
++    fun removeListener(senderId: String, receiverId: String) {
++        val key = if (receiverId.isEmpty()) "inbox_$senderId" else chatRoomId(senderId, receiverId)
++        removeListenerByKey(key)
++    }
++
+     fun clearAllListeners() {
+-        listeners.forEach { (_, listener) ->
+-            db.removeEventListener(listener)
++        listeners.forEach { (_, pair) ->
++            pair.first.removeEventListener(pair.second)
+         }
+         listeners.clear()
+     }
+Index: app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<RelativeLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".activities.MainActivity\"\r\n    android:background=\"#F8FAFF\">\r\n\r\n    <com.google.android.material.appbar.AppBarLayout\r\n        android:id=\"@+id/appBarLayout\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_alignParentTop=\"true\"\r\n        android:background=\"@color/primary_navy\"\r\n        app:elevation=\"0dp\">\r\n\r\n        <com.google.android.material.appbar.MaterialToolbar\r\n            android:id=\"@+id/toolbar\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"?attr/actionBarSize\">\r\n\r\n            <LinearLayout\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"match_parent\"\r\n                android:orientation=\"horizontal\"\r\n                android:gravity=\"center_vertical\">\r\n\r\n                <ImageView\r\n                    android:id=\"@+id/iv_main_logo\"\r\n                    android:layout_width=\"32dp\"\r\n                    android:layout_height=\"32dp\"\r\n                    android:src=\"@drawable/logo_innobridge\"\r\n                    android:contentDescription=\"Logo InnoBridge\" />\r\n\r\n                <TextView\r\n                    android:id=\"@+id/tv_main_title\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginStart=\"12dp\"\r\n                    android:text=\"InnoBridge\"\r\n                    android:textColor=\"@color/white\"\r\n                    android:textSize=\"20sp\"\r\n                    android:textStyle=\"bold\" />\r\n            </LinearLayout>\r\n        </com.google.android.material.appbar.MaterialToolbar>\r\n    </com.google.android.material.appbar.AppBarLayout>\r\n\r\n    <com.google.android.material.bottomnavigation.BottomNavigationView\r\n        android:id=\"@+id/bottom_navigation\"\r\n        android:layout_width=\"match_parent\"\r\n\r\n        android:layout_height=\"72dp\"\r\n\r\n        android:layout_alignParentBottom=\"true\"\r\n        android:background=\"@color/white\"\r\n        app:elevation=\"16dp\"\r\n        app:menu=\"@menu/bottom_nav_menu\"\r\n\r\n        app:labelVisibilityMode=\"unlabeled\"\r\n\r\n        app:theme=\"@style/Theme.BottomNavCustom\" />\r\n\r\n    <androidx.fragment.app.FragmentContainerView\r\n        android:id=\"@+id/nav_host_fragment\"\r\n        android:name=\"androidx.navigation.fragment.NavHostFragment\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:layout_below=\"@id/appBarLayout\"\r\n        android:layout_above=\"@id/bottom_navigation\"\r\n        app:defaultNavHost=\"true\"\r\n        app:navGraph=\"@navigation/nav_graph\" />\r\n\r\n</RelativeLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_main.xml b/app/src/main/res/layout/activity_main.xml
+--- a/app/src/main/res/layout/activity_main.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/layout/activity_main.xml	(date 1781777273818)
+@@ -1,19 +1,24 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
++<androidx.constraintlayout.widget.ConstraintLayout
++    xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
++    android:id="@+id/main_container"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    tools:context=".activities.MainActivity"
+-    android:background="#F8FAFF">
++    android:background="@color/background_light"
++    tools:context=".activities.MainActivity">
+ 
++    <!-- AppBar -->
+     <com.google.android.material.appbar.AppBarLayout
+         android:id="@+id/appBarLayout"
+-        android:layout_width="match_parent"
++        android:layout_width="0dp"
+         android:layout_height="wrap_content"
+-        android:layout_alignParentTop="true"
+         android:background="@color/primary_navy"
+-        app:elevation="0dp">
++        app:elevation="0dp"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent">
+ 
+         <com.google.android.material.appbar.MaterialToolbar
+             android:id="@+id/toolbar"
+@@ -23,15 +28,15 @@
+             <LinearLayout
+                 android:layout_width="wrap_content"
+                 android:layout_height="match_parent"
+-                android:orientation="horizontal"
+-                android:gravity="center_vertical">
++                android:gravity="center_vertical"
++                android:orientation="horizontal">
+ 
+                 <ImageView
+                     android:id="@+id/iv_main_logo"
+                     android:layout_width="32dp"
+                     android:layout_height="32dp"
+-                    android:src="@drawable/logo_innobridge"
+-                    android:contentDescription="Logo InnoBridge" />
++                    android:contentDescription="Logo InnoBridge"
++                    android:src="@drawable/logo_innobridge" />
+ 
+                 <TextView
+                     android:id="@+id/tv_main_title"
+@@ -46,29 +51,32 @@
+         </com.google.android.material.appbar.MaterialToolbar>
+     </com.google.android.material.appbar.AppBarLayout>
+ 
++    <!-- Bottom Navigation — dideklarasikan sebelum fragment agar bisa jadi anchor constraint -->
+     <com.google.android.material.bottomnavigation.BottomNavigationView
+-        android:id="@+id/bottom_navigation"
+-        android:layout_width="match_parent"
+-
+-        android:layout_height="72dp"
+-
+-        android:layout_alignParentBottom="true"
++        android:id="@+id/bottom_nav_container"
++        android:layout_width="0dp"
++        android:layout_height="wrap_content"
+         android:background="@color/white"
+-        app:elevation="16dp"
++        app:elevation="8dp"
++        app:itemIconTint="@color/bottom_nav_icon_tint"
++        app:itemTextColor="@color/bottom_nav_text_color"
++        app:labelVisibilityMode="labeled"
+         app:menu="@menu/bottom_nav_menu"
+-
+-        app:labelVisibilityMode="unlabeled"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent" />
+ 
+-        app:theme="@style/Theme.BottomNavCustom" />
+-
++    <!-- Fragment Container: antara AppBar atas dan BottomNav bawah -->
+     <androidx.fragment.app.FragmentContainerView
+         android:id="@+id/nav_host_fragment"
+         android:name="androidx.navigation.fragment.NavHostFragment"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent"
+-        android:layout_below="@id/appBarLayout"
+-        android:layout_above="@id/bottom_navigation"
++        android:layout_width="0dp"
++        android:layout_height="0dp"
+         app:defaultNavHost="true"
+-        app:navGraph="@navigation/nav_graph" />
++        app:navGraph="@navigation/nav_graph"
++        app:layout_constraintBottom_toTopOf="@id/bottom_nav_container"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
+ 
+-</RelativeLayout>
+\ No newline at end of file
++</androidx.constraintlayout.widget.ConstraintLayout>
+Index: app/src/main/java/com/example/finalprojectinnobridge/chat/ChatRoomAdapter.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/finalprojectinnobridge/chat/ChatRoomAdapter.kt b/app/src/main/java/com/example/finalprojectinnobridge/chat/ChatRoomAdapter.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/finalprojectinnobridge/chat/ChatRoomAdapter.kt	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ /dev/null	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
+@@ -1,79 +0,0 @@
+-package com.example.finalprojectinnobridge.chat
+-
+-import android.view.LayoutInflater
+-import android.view.ViewGroup
+-import androidx.recyclerview.widget.DiffUtil
+-import androidx.recyclerview.widget.ListAdapter
+-import androidx.recyclerview.widget.RecyclerView
+-import com.example.finalprojectinnobridge.databinding.ItemChatReceiveBinding
+-import com.example.finalprojectinnobridge.databinding.ItemChatSendBinding
+-import com.example.finalprojectinnobridge.models.Message
+-import java.text.SimpleDateFormat
+-import java.util.Date
+-import java.util.Locale
+-
+-class ChatRoomAdapter(
+-    private val myId: String
+-) : ListAdapter<Message, RecyclerView.ViewHolder>(DiffCallback()) {
+-
+-    companion object {
+-        private const val VIEW_TYPE_SEND = 1
+-        private const val VIEW_TYPE_RECEIVE = 2
+-    }
+-
+-    override fun getItemViewType(position: Int): Int {
+-        return if (getItem(position).senderId == myId) VIEW_TYPE_SEND else VIEW_TYPE_RECEIVE
+-    }
+-
+-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+-        return if (viewType == VIEW_TYPE_SEND) {
+-            val binding = ItemChatSendBinding.inflate(
+-                LayoutInflater.from(parent.context), parent, false
+-            )
+-            SendViewHolder(binding)
+-        } else {
+-            val binding = ItemChatReceiveBinding.inflate(
+-                LayoutInflater.from(parent.context), parent, false
+-            )
+-            ReceiveViewHolder(binding)
+-        }
+-    }
+-
+-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+-        val message = getItem(position)
+-        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(message.timestamp))
+-        when (holder) {
+-            is SendViewHolder -> holder.bind(message, time)
+-            is ReceiveViewHolder -> holder.bind(message, time)
+-        }
+-    }
+-
+-    inner class SendViewHolder(
+-        private val binding: ItemChatSendBinding
+-    ) : RecyclerView.ViewHolder(binding.root) {
+-        fun bind(message: Message, time: String) {
+-            binding.tvMessage.text = message.message
+-            binding.tvTime.text = time
+-        }
+-    }
+-
+-    inner class ReceiveViewHolder(
+-        private val binding: ItemChatReceiveBinding
+-    ) : RecyclerView.ViewHolder(binding.root) {
+-        fun bind(message: Message, time: String) {
+-            binding.tvMessage.text = message.message
+-            binding.tvTime.text = time
+-        }
+-    }
+-
+-    class DiffCallback : DiffUtil.ItemCallback<Message>() {
+-        override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
+-            // 🌟 KUNCI FIX ANTI-CRASH: Membandingkan timestamp unik kiriman pesan agar aman dari NullPointerException
+-            return oldItem.timestamp == newItem.timestamp
+-        }
+-
+-        override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
+-            return oldItem.message == newItem.message && oldItem.senderId == newItem.senderId
+-        }
+-    }
+-}
+\ No newline at end of file
+Index: app/src/main/java/com/example/finalprojectinnobridge/chat/ChatRoomFragment.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/finalprojectinnobridge/chat/ChatRoomFragment.kt b/app/src/main/java/com/example/finalprojectinnobridge/chat/ChatRoomFragment.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/finalprojectinnobridge/chat/ChatRoomFragment.kt	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ /dev/null	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
+@@ -1,140 +0,0 @@
+-package com.example.finalprojectinnobridge.chat
+-
+-import android.os.Bundle
+-import android.view.LayoutInflater
+-import android.view.View
+-import android.view.ViewGroup
+-import android.widget.Toast
+-import androidx.fragment.app.Fragment
+-import androidx.fragment.app.viewModels
+-import androidx.navigation.fragment.findNavController
+-import androidx.recyclerview.widget.LinearLayoutManager
+-import com.example.finalprojectinnobridge.databinding.FragmentChatRoomBinding
+-import com.example.finalprojectinnobridge.models.Message
+-import com.example.finalprojectinnobridge.utils.SessionManager
+-import com.example.finalprojectinnobridge.viewmodels.MessageViewModel
+-
+-class ChatRoomFragment : Fragment() {
+-
+-    private var _binding: FragmentChatRoomBinding? = null
+-    private val binding get() = _binding!!
+-
+-    private val viewModel: MessageViewModel by viewModels()
+-    private lateinit var adapter: ChatRoomAdapter
+-    private lateinit var myId: String
+-    private lateinit var myName: String
+-    private lateinit var partnerId: String
+-    private lateinit var partnerName: String
+-
+-    override fun onCreateView(
+-        inflater: LayoutInflater, container: ViewGroup?,
+-        savedInstanceState: Bundle?
+-    ): View {
+-        _binding = FragmentChatRoomBinding.inflate(inflater, container, false)
+-        return binding.root
+-    }
+-
+-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+-        super.onViewCreated(view, savedInstanceState)
+-
+-        val sessionManager = SessionManager(requireContext())
+-        myId = sessionManager.getUserId() ?: ""
+-        myName = sessionManager.getUserName() ?: "User"
+-        partnerId = arguments?.getString("partnerId") ?: ""
+-        partnerName = arguments?.getString("partnerName") ?: ""
+-
+-        // Validate essential data
+-        if (myId.isEmpty()) {
+-            showErrorAndGoBack("User ID tidak ditemukan. Silakan login kembali.")
+-            return
+-        }
+-
+-        if (partnerId.isEmpty()) {
+-            showErrorAndGoBack("Partner ID tidak ditemukan. Silakan pilih partner yang valid.")
+-            return
+-        }
+-
+-        // Set toolbar title to partner name if available
+-        if (partnerName.isEmpty()) {
+-            partnerName = "User ($partnerId)"
+-        }
+-
+-        setupRecyclerView()
+-        observeMessages()
+-        setupSendButton()
+-
+-        viewModel.fetchMessages(myId, partnerId)
+-    }
+-
+-    private fun setupRecyclerView() {
+-        adapter = ChatRoomAdapter(myId)
+-        binding.rvChatRoom.apply {
+-            layoutManager = LinearLayoutManager(requireContext()).also {
+-                it.stackFromEnd = true
+-            }
+-            adapter = this@ChatRoomFragment.adapter
+-        }
+-    }
+-
+-    private fun observeMessages() {
+-        viewModel.messages.observe(viewLifecycleOwner) { messages ->
+-            if (messages != null) {
+-                adapter.submitList(messages)
+-                if (messages.isNotEmpty()) {
+-                    binding.rvChatRoom.scrollToPosition(messages.size - 1)
+-                }
+-            }
+-        }
+-
+-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+-        }
+-
+-        viewModel.error.observe(viewLifecycleOwner) { err ->
+-            err?.let {
+-                Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
+-            }
+-        }
+-    }
+-
+-    private fun setupSendButton() {
+-        binding.btnSend.setOnClickListener {
+-            val text = binding.etMessage.text.toString().trim()
+-            if (text.isEmpty()) {
+-                Toast.makeText(requireContext(), "Pesan tidak boleh kosong", Toast.LENGTH_SHORT).show()
+-                return@setOnClickListener
+-            }
+-
+-            val message = Message(
+-                senderId = myId,
+-                senderName = myName,
+-                receiverId = partnerId,
+-                receiverName = partnerName,
+-                message = text,
+-                timestamp = System.currentTimeMillis()
+-            )
+-
+-            viewModel.sendMessage(message) { success, err ->
+-                if (success) {
+-                    binding.etMessage.text?.clear()
+-                } else {
+-                    Toast.makeText(requireContext(), "Gagal kirim: $err", Toast.LENGTH_SHORT).show()
+-                }
+-            }
+-        }
+-    }
+-
+-    private fun showErrorAndGoBack(message: String) {
+-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+-        try {
+-            findNavController().popBackStack()
+-        } catch (e: Exception) {
+-            e.printStackTrace()
+-        }
+-    }
+-
+-    override fun onDestroyView() {
+-        super.onDestroyView()
+-        _binding = null
+-    }
+-}
+\ No newline at end of file
+Index: app/src/main/res/layout/content_main.xml
+===================================================================
+diff --git a/app/src/main/res/layout/content_main.xml b/app/src/main/res/layout/content_main.xml
+deleted file mode 100644
+--- a/app/src/main/res/layout/content_main.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ /dev/null	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
+@@ -1,19 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:app="http://schemas.android.com/apk/res-auto"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent"
+-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+-
+-    <fragment
+-        android:id="@+id/nav_host_fragment_content_main"
+-        android:name="androidx.navigation.fragment.NavHostFragment"
+-        android:layout_width="0dp"
+-        android:layout_height="0dp"
+-        app:defaultNavHost="true"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent"
+-        app:navGraph="@navigation/nav_graph" />
+-</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_challenge.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:width=\"24dp\"\r\n    android:height=\"24dp\"\r\n    android:viewportWidth=\"24\"\r\n    android:viewportHeight=\"24\">\r\n    <path\r\n        android:fillColor=\"?attr/colorControlNormal\"\r\n        android:pathData=\"M19,5V19H5V5H19M19,3H5C3.9,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.9 20.1,3 19,3M14,17H7V15H14V17M17,13H7V11H17V13M17,9H7V7H17V9Z\" />\r\n</vector>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_challenge.xml b/app/src/main/res/drawable/ic_challenge.xml
+--- a/app/src/main/res/drawable/ic_challenge.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/drawable/ic_challenge.xml	(date 1781776368521)
+@@ -4,6 +4,6 @@
+     android:viewportWidth="24"
+     android:viewportHeight="24">
+     <path
+-        android:fillColor="?attr/colorControlNormal"
++        android:fillColor="#FF000000"
+         android:pathData="M19,5V19H5V5H19M19,3H5C3.9,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.9 20.1,3 19,3M14,17H7V15H14V17M17,13H7V11H17V13M17,9H7V7H17V9Z" />
+-</vector>
+\ No newline at end of file
++</vector>
+Index: app/src/main/res/navigation/nav_graph.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<navigation xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:id=\"@+id/nav_graph\"\r\n    app:startDestination=\"@id/fragment_splash\">\r\n\r\n    <fragment\r\n        android:id=\"@+id/fragment_splash\"\r\n        android:name=\"com.example.finalprojectinnobridge.auth.SplashFragment\"\r\n        android:label=\"Splash\"\r\n        tools:layout=\"@layout/fragment_splash\">\r\n        <action\r\n            android:id=\"@+id/action_splash_to_login\"\r\n            app:destination=\"@id/fragment_login\"\r\n            app:popUpTo=\"@id/fragment_splash\"\r\n            app:popUpToInclusive=\"true\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/fragment_login\"\r\n        android:name=\"com.example.finalprojectinnobridge.auth.LogInFragment\"\r\n        android:label=\"Login\"\r\n        tools:layout=\"@layout/fragment_login\">\r\n        <action\r\n            android:id=\"@+id/action_login_to_register\"\r\n            app:destination=\"@id/fragment_register\" />\r\n        <action\r\n            android:id=\"@+id/action_login_to_home\"\r\n            app:destination=\"@id/navigation_home\"\r\n            app:popUpTo=\"@id/nav_graph\"\r\n            app:popUpToInclusive=\"true\" />\r\n        <action\r\n            android:id=\"@+id/action_login_to_dashboard\"\r\n            app:destination=\"@id/navigation_dashboard\"\r\n            app:popUpTo=\"@id/nav_graph\"\r\n            app:popUpToInclusive=\"true\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/fragment_register\"\r\n        android:name=\"com.example.finalprojectinnobridge.auth.RegisterFragment\"\r\n        android:label=\"Register\"\r\n        tools:layout=\"@layout/fragment_register\" />\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_home\"\r\n        android:name=\"com.example.finalprojectinnobridge.mahasiswa.HomeFragment\"\r\n        android:label=\"Beranda\"\r\n        tools:layout=\"@layout/fragment_home\">\r\n        <action\r\n            android:id=\"@+id/action_home_to_challenge_detail\"\r\n            app:destination=\"@id/navigation_challenge_detail\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_chat\"\r\n        android:name=\"com.example.finalprojectinnobridge.mahasiswa.ChatFragment\"\r\n        android:label=\"Chat\"\r\n        tools:layout=\"@layout/fragment_chat\">\r\n        <action\r\n            android:id=\"@+id/action_navigation_chat_to_navigation_chat_room\"\r\n            app:destination=\"@id/navigation_chat_room\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_challenge\"\r\n        android:name=\"com.example.finalprojectinnobridge.mahasiswa.ChallengeFragment\"\r\n        android:label=\"Tantangan\"\r\n        tools:layout=\"@layout/fragment_challenge\">\r\n        <action\r\n            android:id=\"@+id/action_challenge_to_detail\"\r\n            app:destination=\"@id/navigation_challenge_detail\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_my_proposal\"\r\n        android:name=\"com.example.finalprojectinnobridge.mahasiswa.MyProposalFragment\"\r\n        android:label=\"Inovasi Saya\"\r\n        tools:layout=\"@layout/fragment_my_proposal\">\r\n        <action\r\n            android:id=\"@+id/action_navigation_my_proposal_to_navigation_proposal_detail\"\r\n            app:destination=\"@id/navigation_proposal_detail\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_profile\"\r\n        android:name=\"com.example.finalprojectinnobridge.mahasiswa.ProfileFragment\"\r\n        android:label=\"Profil\"\r\n        tools:layout=\"@layout/fragment_profile\">\r\n        <action\r\n            android:id=\"@+id/action_navigation_profile_to_editProfileFragment\"\r\n            app:destination=\"@id/editProfileFragment\" />\r\n        <action\r\n            android:id=\"@+id/action_navigation_profile_to_navigation_proposal_detail\"\r\n            app:destination=\"@id/navigation_proposal_detail\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_challenge_detail\"\r\n        android:name=\"com.example.finalprojectinnobridge.mahasiswa.ChallengeDetailFragment\"\r\n        android:label=\"Detail Tantangan\"\r\n        tools:layout=\"@layout/fragment_challenge_detail\">\r\n        <action\r\n            android:id=\"@+id/action_detail_to_submit_proposal\"\r\n            app:destination=\"@id/navigation_submit_proposal\" />\r\n        <action\r\n            android:id=\"@+id/action_detail_to_chat_room\"\r\n            app:destination=\"@id/navigation_chat_room\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_submit_proposal\"\r\n        android:name=\"com.example.finalprojectinnobridge.mahasiswa.SubmitProposalFragment\"\r\n        android:label=\"Submit Proposal\"\r\n        tools:layout=\"@layout/fragment_submit_proposal\" />\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_dashboard\"\r\n        android:name=\"com.example.finalprojectinnobridge.perusahaan.DashboardFragment\"\r\n        android:label=\"Dasbor\"\r\n        tools:layout=\"@layout/fragment_dashboard\">\r\n        <action\r\n            android:id=\"@+id/action_dashboard_to_edit_challenge\"\r\n            app:destination=\"@id/navigation_edit_challenge\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_chat_perusahaan\"\r\n        android:name=\"com.example.finalprojectinnobridge.perusahaan.ChatListFragment\"\r\n        android:label=\"Chat Perusahaan\"\r\n        tools:layout=\"@layout/fragment_chat_list_perusahaan\">\r\n        <action\r\n            android:id=\"@+id/action_chat_perusahaan_to_chat_room\"\r\n            app:destination=\"@id/navigation_chat_room\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_add_challenge\"\r\n        android:name=\"com.example.finalprojectinnobridge.perusahaan.AddChallengeFragment\"\r\n        android:label=\"Tambah Tantangan\"\r\n        tools:layout=\"@layout/fragment_add_challenge\">\r\n        <action\r\n            android:id=\"@+id/action_add_challenge_to_proposal_list\"\r\n            app:destination=\"@id/navigation_proposal_list\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_proposal_list\"\r\n        android:name=\"com.example.finalprojectinnobridge.perusahaan.ProposalListFragment\"\r\n        android:label=\"Daftar Proposal\"\r\n        tools:layout=\"@layout/fragment_proposal_list\">\r\n        <action\r\n            android:id=\"@+id/action_navigation_proposal_list_to_navigation_proposal_detail\"\r\n            app:destination=\"@id/navigation_proposal_detail\" />\r\n        <action\r\n            android:id=\"@+id/action_navigation_proposal_list_to_navigation_give_score\"\r\n            app:destination=\"@id/navigation_give_score\" />\r\n        <action\r\n            android:id=\"@+id/action_navigation_proposal_list_to_navigation_chat_room\"\r\n            app:destination=\"@id/navigation_chat_room\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_profile_perusahaan\"\r\n        android:name=\"com.example.finalprojectinnobridge.perusahaan.ProfileFragment\"\r\n        android:label=\"Profil Perusahaan\"\r\n        tools:layout=\"@layout/fragment_profile\">\r\n        <action\r\n            android:id=\"@+id/action_navigation_profile_perusahaan_to_editProfileFragment\"\r\n            app:destination=\"@id/editProfileFragment\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_edit_challenge\"\r\n        android:name=\"com.example.finalprojectinnobridge.perusahaan.EditChallengeFragment\"\r\n        android:label=\"Edit Tantangan\"\r\n        tools:layout=\"@layout/fragment_edit_challenge\">\r\n        <argument\r\n            android:name=\"challengeId\"\r\n            app:argType=\"string\"\r\n            app:nullable=\"true\"\r\n            android:defaultValue=\"@null\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_chat_room\"\r\n        android:name=\"com.example.finalprojectinnobridge.chat.ChatRoomFragment\"\r\n        android:label=\"Ruang Chat\"\r\n        tools:layout=\"@layout/fragment_chat_room\">\r\n        <argument\r\n            android:name=\"partnerId\"\r\n            app:argType=\"string\"\r\n            app:nullable=\"true\"\r\n            android:defaultValue=\"@null\" />\r\n        <argument\r\n            android:name=\"partnerName\"\r\n            app:argType=\"string\"\r\n            app:nullable=\"true\"\r\n            android:defaultValue=\"@null\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/editProfileFragment\"\r\n        android:name=\"com.example.finalprojectinnobridge.auth.EditProfileFragment\"\r\n        android:label=\"Edit Profil\"\r\n        tools:layout=\"@layout/fragment_edit_profile\" />\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_proposal_detail\"\r\n        android:name=\"com.example.finalprojectinnobridge.perusahaan.ProposalDetailFragment\"\r\n        android:label=\"Detail Proposal\"\r\n        tools:layout=\"@layout/fragment_proposal_detail\">\r\n        <argument\r\n            android:name=\"proposalId\"\r\n            app:argType=\"string\" />\r\n    </fragment>\r\n\r\n    <fragment\r\n        android:id=\"@+id/navigation_give_score\"\r\n        android:name=\"com.example.finalprojectinnobridge.perusahaan.GiveScoreFragment\"\r\n        android:label=\"Beri Skor\"\r\n        tools:layout=\"@layout/fragment_give_score\">\r\n        <argument\r\n            android:name=\"proposalId\"\r\n            app:argType=\"string\" />\r\n        <argument\r\n            android:name=\"judul\"\r\n            app:argType=\"string\" />\r\n        <argument\r\n            android:name=\"userName\"\r\n            app:argType=\"string\" />\r\n    </fragment>\r\n\r\n</navigation>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/navigation/nav_graph.xml b/app/src/main/res/navigation/nav_graph.xml
+--- a/app/src/main/res/navigation/nav_graph.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/navigation/nav_graph.xml	(date 1781778310307)
+@@ -132,7 +132,7 @@
+         tools:layout="@layout/fragment_chat_list_perusahaan">
+         <action
+             android:id="@+id/action_chat_perusahaan_to_chat_room"
+-            app:destination="@id/navigation_chat_room" />
++            app:destination="@id/navigation_chat_room_perusahaan" />
+     </fragment>
+ 
+     <fragment
+@@ -158,7 +158,7 @@
+             app:destination="@id/navigation_give_score" />
+         <action
+             android:id="@+id/action_navigation_proposal_list_to_navigation_chat_room"
+-            app:destination="@id/navigation_chat_room" />
++            app:destination="@id/navigation_chat_room_perusahaan" />
+     </fragment>
+ 
+     <fragment
+@@ -185,7 +185,24 @@
+ 
+     <fragment
+         android:id="@+id/navigation_chat_room"
+-        android:name="com.example.finalprojectinnobridge.chat.ChatRoomFragment"
++        android:name="com.example.finalprojectinnobridge.mahasiswa.ChatRoomFragment"
++        android:label="Ruang Chat"
++        tools:layout="@layout/fragment_chat_room">
++        <argument
++            android:name="partnerId"
++            app:argType="string"
++            app:nullable="true"
++            android:defaultValue="@null" />
++        <argument
++            android:name="partnerName"
++            app:argType="string"
++            app:nullable="true"
++            android:defaultValue="@null" />
++    </fragment>
++
++    <fragment
++        android:id="@+id/navigation_chat_room_perusahaan"
++        android:name="com.example.finalprojectinnobridge.perusahaan.ChatRoomPerusahaanFragment"
+         android:label="Ruang Chat"
+         tools:layout="@layout/fragment_chat_room">
+         <argument
+@@ -214,6 +231,9 @@
+         <argument
+             android:name="proposalId"
+             app:argType="string" />
++        <action
++            android:id="@+id/action_proposal_detail_to_chat_room_perusahaan"
++            app:destination="@id/navigation_chat_room_perusahaan" />
+     </fragment>
+ 
+     <fragment
+Index: app/src/main/java/com/example/finalprojectinnobridge/perusahaan/ProposalDetailFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.finalprojectinnobridge.perusahaan\r\n\r\nimport android.os.Bundle\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport androidx.fragment.app.Fragment\r\nimport androidx.fragment.app.viewModels\r\nimport androidx.navigation.fragment.findNavController\r\nimport com.example.finalprojectinnobridge.databinding.FragmentProposalDetailBinding\r\nimport com.example.finalprojectinnobridge.viewmodels.ProposalViewModel\r\n\r\nclass ProposalDetailFragment : Fragment() {\r\n\r\n    private var _binding: FragmentProposalDetailBinding? = null\r\n    private val binding get() = _binding!!\r\n    private val viewModel: ProposalViewModel by viewModels()\r\n    private var proposalId: String? = null\r\n\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater, container: ViewGroup?,\r\n        savedInstanceState: Bundle?\r\n    ): View {\r\n        _binding = FragmentProposalDetailBinding.inflate(inflater, container, false)\r\n        return binding.root\r\n    }\r\n\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        super.onViewCreated(view, savedInstanceState)\r\n\r\n        proposalId = arguments?.getString(\"proposalId\")\r\n        \r\n        binding.toolbar.setNavigationOnClickListener {\r\n            findNavController().navigateUp()\r\n        }\r\n\r\n        // Hubungi dihilangkan dari detail sesuai permintaan\r\n        binding.btnChatInnovator.visibility = View.GONE\r\n\r\n        observeViewModel()\r\n        viewModel.listenToAllProposals()\r\n    }\r\n\r\n    private fun observeViewModel() {\r\n        viewModel.proposals.observe(viewLifecycleOwner) { proposals ->\r\n            val proposal = proposals.find { it.proposalId == proposalId }\r\n            proposal?.let { p ->\r\n                binding.tvDetailJudul.text = p.judul\r\n                binding.tvDetailStatus.text = p.status\r\n                binding.tvDetailUser.text = \"${p.userName} • ${p.userUniversity}\"\r\n                binding.tvDetailSolusi.text = p.solusi\r\n                binding.tvDetailVideo.text = p.pitchVideo.ifEmpty { \"Tidak ada video\" }\r\n                \r\n                if (p.score > 0 || p.evaluasi.isNotEmpty()) {\r\n                    binding.cardScore.visibility = View.VISIBLE\r\n                    binding.tvDetailScore.text = p.score.toString()\r\n                    binding.tvDetailEvaluasi.text = p.evaluasi\r\n                } else {\r\n                    binding.cardScore.visibility = View.GONE\r\n                }\r\n            }\r\n        }\r\n    }\r\n\r\n    override fun onDestroyView() {\r\n        super.onDestroyView()\r\n        _binding = null\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/finalprojectinnobridge/perusahaan/ProposalDetailFragment.kt b/app/src/main/java/com/example/finalprojectinnobridge/perusahaan/ProposalDetailFragment.kt
+--- a/app/src/main/java/com/example/finalprojectinnobridge/perusahaan/ProposalDetailFragment.kt	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/java/com/example/finalprojectinnobridge/perusahaan/ProposalDetailFragment.kt	(date 1781778328361)
+@@ -4,9 +4,12 @@
+ import android.view.LayoutInflater
+ import android.view.View
+ import android.view.ViewGroup
++import android.widget.Toast
++import androidx.core.os.bundleOf
+ import androidx.fragment.app.Fragment
+ import androidx.fragment.app.viewModels
+ import androidx.navigation.fragment.findNavController
++import com.example.finalprojectinnobridge.R
+ import com.example.finalprojectinnobridge.databinding.FragmentProposalDetailBinding
+ import com.example.finalprojectinnobridge.viewmodels.ProposalViewModel
+ 
+@@ -15,7 +18,11 @@
+     private var _binding: FragmentProposalDetailBinding? = null
+     private val binding get() = _binding!!
+     private val viewModel: ProposalViewModel by viewModels()
++
+     private var proposalId: String? = null
++    // Data mahasiswa pengirim proposal — untuk navigasi ke chat
++    private var mahasiswaId: String = ""
++    private var mahasiswaName: String = ""
+ 
+     override fun onCreateView(
+         inflater: LayoutInflater, container: ViewGroup?,
+@@ -29,13 +36,31 @@
+         super.onViewCreated(view, savedInstanceState)
+ 
+         proposalId = arguments?.getString("proposalId")
+-        
++
+         binding.toolbar.setNavigationOnClickListener {
+             findNavController().navigateUp()
+         }
+ 
+-        // Hubungi dihilangkan dari detail sesuai permintaan
+-        binding.btnChatInnovator.visibility = View.GONE
++        // Tombol chat ke mahasiswa pengirim proposal
++        binding.btnChatInnovator.visibility = View.VISIBLE
++        binding.btnChatInnovator.setOnClickListener {
++            if (mahasiswaId.isEmpty()) {
++                Toast.makeText(requireContext(), "Data mahasiswa belum tersedia", Toast.LENGTH_SHORT).show()
++                return@setOnClickListener
++            }
++            val bundle = bundleOf(
++                "partnerId" to mahasiswaId,
++                "partnerName" to mahasiswaName.ifEmpty { "Mahasiswa" }
++            )
++            try {
++                findNavController().navigate(
++                    R.id.action_proposal_detail_to_chat_room_perusahaan,
++                    bundle
++                )
++            } catch (e: Exception) {
++                Toast.makeText(requireContext(), "Gagal membuka chat: ${e.message}", Toast.LENGTH_SHORT).show()
++            }
++        }
+ 
+         observeViewModel()
+         viewModel.listenToAllProposals()
+@@ -45,12 +70,16 @@
+         viewModel.proposals.observe(viewLifecycleOwner) { proposals ->
+             val proposal = proposals.find { it.proposalId == proposalId }
+             proposal?.let { p ->
++                // Simpan data mahasiswa untuk navigasi chat
++                mahasiswaId = p.userId
++                mahasiswaName = p.userName
++
+                 binding.tvDetailJudul.text = p.judul
+                 binding.tvDetailStatus.text = p.status
+                 binding.tvDetailUser.text = "${p.userName} • ${p.userUniversity}"
+                 binding.tvDetailSolusi.text = p.solusi
+                 binding.tvDetailVideo.text = p.pitchVideo.ifEmpty { "Tidak ada video" }
+-                
++
+                 if (p.score > 0 || p.evaluasi.isNotEmpty()) {
+                     binding.cardScore.visibility = View.VISIBLE
+                     binding.tvDetailScore.text = p.score.toString()
+@@ -58,6 +87,9 @@
+                 } else {
+                     binding.cardScore.visibility = View.GONE
+                 }
++
++                // Aktifkan tombol chat jika userId tersedia
++                binding.btnChatInnovator.isEnabled = p.userId.isNotEmpty()
+             }
+         }
+     }
+@@ -66,4 +98,4 @@
+         super.onDestroyView()
+         _binding = null
+     }
+-}
+\ No newline at end of file
++}
+Index: app/src/main/res/layout/item_chat_receive.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"wrap_content\"\r\n    android:orientation=\"horizontal\"\r\n    android:gravity=\"start\"\r\n    android:paddingVertical=\"4dp\">\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:orientation=\"vertical\"\r\n        android:layout_marginEnd=\"64dp\"\r\n        android:background=\"@drawable/bg_chat_receive\"\r\n        android:paddingHorizontal=\"12dp\"\r\n        android:paddingVertical=\"8dp\">\r\n\r\n        <TextView\r\n            android:id=\"@+id/tvMessage\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:textColor=\"@color/text_navy\"\r\n            android:textSize=\"14sp\" />\r\n\r\n        <TextView\r\n            android:id=\"@+id/tvTime\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_gravity=\"end\"\r\n            android:layout_marginTop=\"2dp\"\r\n            android:textColor=\"@color/text_light_grey\"\r\n            android:textSize=\"10sp\" />\r\n\r\n    </LinearLayout>\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/item_chat_receive.xml b/app/src/main/res/layout/item_chat_receive.xml
+--- a/app/src/main/res/layout/item_chat_receive.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/layout/item_chat_receive.xml	(date 1781772370272)
+@@ -4,13 +4,15 @@
+     android:layout_height="wrap_content"
+     android:orientation="horizontal"
+     android:gravity="start"
+-    android:paddingVertical="4dp">
++    android:paddingStart="12dp"
++    android:paddingEnd="64dp"
++    android:paddingTop="4dp"
++    android:paddingBottom="4dp">
+ 
+     <LinearLayout
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:orientation="vertical"
+-        android:layout_marginEnd="64dp"
+         android:background="@drawable/bg_chat_receive"
+         android:paddingHorizontal="12dp"
+         android:paddingVertical="8dp">
+@@ -20,7 +22,8 @@
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textColor="@color/text_navy"
+-            android:textSize="14sp" />
++            android:textSize="14sp"
++            android:lineSpacingExtra="2dp" />
+ 
+         <TextView
+             android:id="@+id/tvTime"
+@@ -29,8 +32,8 @@
+             android:layout_gravity="end"
+             android:layout_marginTop="2dp"
+             android:textColor="@color/text_light_grey"
+-            android:textSize="10sp" />
++            android:textSize="11sp" />
++
++    </LinearLayout>
+ 
+-    </LinearLayout>
+-
+-</LinearLayout>
+\ No newline at end of file
++</LinearLayout>
+Index: app/src/main/res/drawable/ic_profile.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:width=\"24dp\"\r\n    android:height=\"24dp\"\r\n    android:viewportWidth=\"24\"\r\n    android:viewportHeight=\"24\">\r\n    <path\r\n        android:fillColor=\"?attr/colorControlNormal\"\r\n        android:pathData=\"M12,12c2.21,0 4,-1.79 4,-4s-1.79,-4 -4,-4 -4,1.79 -4,4 1.79,4 4,4zM12,14c-2.67,0 -8,1.34 -8,4v2h16v-2c0,-2.66 -5.33,-4 -8,-4z\" />\r\n</vector>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_profile.xml b/app/src/main/res/drawable/ic_profile.xml
+--- a/app/src/main/res/drawable/ic_profile.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/drawable/ic_profile.xml	(date 1781776374373)
+@@ -4,6 +4,6 @@
+     android:viewportWidth="24"
+     android:viewportHeight="24">
+     <path
+-        android:fillColor="?attr/colorControlNormal"
++        android:fillColor="#FF000000"
+         android:pathData="M12,12c2.21,0 4,-1.79 4,-4s-1.79,-4 -4,-4 -4,1.79 -4,4 1.79,4 4,4zM12,14c-2.67,0 -8,1.34 -8,4v2h16v-2c0,-2.66 -5.33,-4 -8,-4z" />
+-</vector>
+\ No newline at end of file
++</vector>
+Index: app/src/main/res/drawable/ic_chat.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:width=\"24dp\"\r\n    android:height=\"24dp\"\r\n    android:viewportWidth=\"24\"\r\n    android:viewportHeight=\"24\">\r\n    <path\r\n        android:fillColor=\"?attr/colorControlNormal\"\r\n        android:pathData=\"M20,2H4C2.9,2 2,2.9 2,4V22L6,18H20C21.1,18 22,17.1 22,16V4C22,2.9 21.1,2 20,2M20,16H5.17L4,17.17V4H20V16Z\" />\r\n</vector>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_chat.xml b/app/src/main/res/drawable/ic_chat.xml
+--- a/app/src/main/res/drawable/ic_chat.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/drawable/ic_chat.xml	(date 1781776365945)
+@@ -4,6 +4,6 @@
+     android:viewportWidth="24"
+     android:viewportHeight="24">
+     <path
+-        android:fillColor="?attr/colorControlNormal"
++        android:fillColor="#FF000000"
+         android:pathData="M20,2H4C2.9,2 2,2.9 2,4V22L6,18H20C21.1,18 22,17.1 22,16V4C22,2.9 21.1,2 20,2M20,16H5.17L4,17.17V4H20V16Z" />
+-</vector>
+\ No newline at end of file
++</vector>
+Index: app/src/main/res/drawable/ic_home.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:width=\"24dp\"\r\n    android:height=\"24dp\"\r\n    android:viewportWidth=\"24\"\r\n    android:viewportHeight=\"24\">\r\n    <path\r\n        android:fillColor=\"?attr/colorControlNormal\"\r\n        android:pathData=\"M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z\" />\r\n</vector>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_home.xml b/app/src/main/res/drawable/ic_home.xml
+--- a/app/src/main/res/drawable/ic_home.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/drawable/ic_home.xml	(date 1781776363085)
+@@ -4,6 +4,6 @@
+     android:viewportWidth="24"
+     android:viewportHeight="24">
+     <path
+-        android:fillColor="?attr/colorControlNormal"
++        android:fillColor="#FF000000"
+         android:pathData="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
+-</vector>
+\ No newline at end of file
++</vector>
+Index: app/src/main/res/layout/item_chat_send.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"wrap_content\"\r\n    android:orientation=\"horizontal\"\r\n    android:gravity=\"end\"\r\n    android:paddingVertical=\"4dp\">\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:orientation=\"vertical\"\r\n        android:layout_marginStart=\"64dp\"\r\n        android:background=\"@drawable/bg_chat_send\"\r\n        android:paddingHorizontal=\"12dp\"\r\n        android:paddingVertical=\"8dp\">\r\n\r\n        <TextView\r\n            android:id=\"@+id/tvMessage\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:textColor=\"@color/white\"\r\n            android:textSize=\"14sp\" />\r\n\r\n        <TextView\r\n            android:id=\"@+id/tvTime\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_gravity=\"end\"\r\n            android:layout_marginTop=\"2dp\"\r\n            android:textColor=\"#CCffffff\"\r\n            android:textSize=\"10sp\" />\r\n\r\n    </LinearLayout>\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/item_chat_send.xml b/app/src/main/res/layout/item_chat_send.xml
+--- a/app/src/main/res/layout/item_chat_send.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/layout/item_chat_send.xml	(date 1781772360558)
+@@ -4,13 +4,15 @@
+     android:layout_height="wrap_content"
+     android:orientation="horizontal"
+     android:gravity="end"
+-    android:paddingVertical="4dp">
++    android:paddingStart="64dp"
++    android:paddingEnd="12dp"
++    android:paddingTop="4dp"
++    android:paddingBottom="4dp">
+ 
+     <LinearLayout
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:orientation="vertical"
+-        android:layout_marginStart="64dp"
+         android:background="@drawable/bg_chat_send"
+         android:paddingHorizontal="12dp"
+         android:paddingVertical="8dp">
+@@ -20,7 +22,8 @@
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textColor="@color/white"
+-            android:textSize="14sp" />
++            android:textSize="14sp"
++            android:lineSpacingExtra="2dp" />
+ 
+         <TextView
+             android:id="@+id/tvTime"
+@@ -29,8 +32,8 @@
+             android:layout_gravity="end"
+             android:layout_marginTop="2dp"
+             android:textColor="#CCffffff"
+-            android:textSize="10sp" />
++            android:textSize="11sp" />
++
++    </LinearLayout>
+ 
+-    </LinearLayout>
+-
+-</LinearLayout>
+\ No newline at end of file
++</LinearLayout>
+Index: app/src/main/res/values/dimens.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <dimen name=\"fab_margin\">16dp</dimen>\r\n    <dimen name=\"screen_margin\">16dp</dimen>\r\n    <dimen name=\"card_corner_radius\">12dp</dimen>\r\n    <dimen name=\"card_elevation\">2dp</dimen>\r\n    <dimen name=\"spacing_small\">8dp</dimen>\r\n    <dimen name=\"spacing_medium\">16dp</dimen>\r\n    <dimen name=\"spacing_large\">24dp</dimen>\r\n\r\n    <dimen name=\"text_size_small\">12sp</dimen>\r\n    <dimen name=\"text_size_medium\">16sp</dimen>\r\n    <dimen name=\"text_size_large\">20sp</dimen>\r\n    <dimen name=\"text_size_xlarge\">24sp</dimen>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/dimens.xml b/app/src/main/res/values/dimens.xml
+--- a/app/src/main/res/values/dimens.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/values/dimens.xml	(date 1781774465850)
+@@ -11,4 +11,7 @@
+     <dimen name="text_size_medium">16sp</dimen>
+     <dimen name="text_size_large">20sp</dimen>
+     <dimen name="text_size_xlarge">24sp</dimen>
++
++    <!-- Padding bawah untuk list agar tidak tertutup floating navbar (64dp navbar + 16dp margin + 4dp buffer) -->
++    <dimen name="chat_list_bottom_padding">96dp</dimen>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_innovation.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:width=\"24dp\"\r\n    android:height=\"24dp\"\r\n    android:viewportWidth=\"24\"\r\n    android:viewportHeight=\"24\">\r\n    <path\r\n        android:fillColor=\"?attr/colorControlNormal\"\r\n        android:pathData=\"M12,2C8.13,2 5,5.13 5,9c0,2.38 1.19,4.47 3,5.74V17c0,0.55 0.45,1 1,1h6c0.55,0 1,-0.45 1,-1v-2.26c1.81,-1.27 3,-3.36 3,-5.74 0,-3.87 -3.13,-7 -7,-7zM9,21c0,0.55 0.45,1 1,1h4c0.55,0 1,-0.45 1,-1v-1H9v1z\" />\r\n</vector>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_innovation.xml b/app/src/main/res/drawable/ic_innovation.xml
+--- a/app/src/main/res/drawable/ic_innovation.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/drawable/ic_innovation.xml	(date 1781776373105)
+@@ -4,6 +4,6 @@
+     android:viewportWidth="24"
+     android:viewportHeight="24">
+     <path
+-        android:fillColor="?attr/colorControlNormal"
++        android:fillColor="#FF000000"
+         android:pathData="M12,2C8.13,2 5,5.13 5,9c0,2.38 1.19,4.47 3,5.74V17c0,0.55 0.45,1 1,1h6c0.55,0 1,-0.45 1,-1v-2.26c1.81,-1.27 3,-3.36 3,-5.74 0,-3.87 -3.13,-7 -7,-7zM9,21c0,0.55 0.45,1 1,1h4c0.55,0 1,-0.45 1,-1v-1H9v1z" />
+-</vector>
+\ No newline at end of file
++</vector>
+Index: app/src/main/res/values/themes.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<resources xmlns:tools=\"http://schemas.android.com/tools\">\r\n    <style name=\"Base.Theme.FinalProjectInnoBridge\" parent=\"Theme.Material3.DayNight.NoActionBar\">\r\n        <item name=\"colorPrimary\">@color/primary_color</item>\r\n        <item name=\"colorPrimaryVariant\">@color/secondary_color</item>\r\n        <item name=\"colorSecondary\">@color/secondary_color</item>\r\n        <item name=\"colorAccent\">@color/accent_color</item>\r\n        <item name=\"android:windowBackground\">@color/background_light</item>\r\n    </style>\r\n\r\n    <style name=\"Theme.FinalProjectInnoBridge\" parent=\"Base.Theme.FinalProjectInnoBridge\" />\r\n\r\n    <style name=\"Theme.App.Starting\" parent=\"Theme.SplashScreen\">\r\n        <item name=\"windowSplashScreenBackground\">@color/background_light</item>\r\n        <item name=\"windowSplashScreenAnimatedIcon\">@drawable/logo_innobridge</item>\r\n        <item name=\"postSplashScreenTheme\">@style/Theme.FinalProjectInnoBridge</item>\r\n    </style>\r\n\r\n    <style name=\"Theme.BottomNavCustom\" parent=\"Widget.Material3.BottomNavigationView\">\r\n        <item name=\"android:theme\">@style/OverlayBottomNavColors</item>\r\n\r\n        <item name=\"itemTextAppearanceActive\">@style/BottomNavTextSize</item>\r\n        <item name=\"itemTextAppearanceInactive\">@style/BottomNavTextSize</item>\r\n    </style>\r\n\r\n    <style name=\"OverlayBottomNavColors\">\r\n        <item name=\"colorContainer\">#00000000</item>\r\n\r\n        <item name=\"colorPrimary\">#0056D2</item>\r\n\r\n        <item name=\"colorOnSurfaceVariant\">#6B7280</item>\r\n    </style>\r\n\r\n    <style name=\"BottomNavTextSize\">\r\n        <item name=\"android:textSize\">10sp</item>\r\n    </style>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/themes.xml b/app/src/main/res/values/themes.xml
+--- a/app/src/main/res/values/themes.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/values/themes.xml	(date 1781777306410)
+@@ -1,8 +1,11 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <resources xmlns:tools="http://schemas.android.com/tools">
++
+     <style name="Base.Theme.FinalProjectInnoBridge" parent="Theme.Material3.DayNight.NoActionBar">
+-        <item name="colorPrimary">@color/primary_color</item>
+-        <item name="colorPrimaryVariant">@color/secondary_color</item>
++        <item name="colorPrimary">@color/primary_blue</item>
++        <item name="colorOnPrimary">@color/white</item>
++        <item name="colorPrimaryContainer">@color/secondary_blue</item>
++        <item name="colorOnPrimaryContainer">@color/primary_navy</item>
+         <item name="colorSecondary">@color/secondary_color</item>
+         <item name="colorAccent">@color/accent_color</item>
+         <item name="android:windowBackground">@color/background_light</item>
+@@ -16,22 +19,4 @@
+         <item name="postSplashScreenTheme">@style/Theme.FinalProjectInnoBridge</item>
+     </style>
+ 
+-    <style name="Theme.BottomNavCustom" parent="Widget.Material3.BottomNavigationView">
+-        <item name="android:theme">@style/OverlayBottomNavColors</item>
+-
+-        <item name="itemTextAppearanceActive">@style/BottomNavTextSize</item>
+-        <item name="itemTextAppearanceInactive">@style/BottomNavTextSize</item>
+-    </style>
+-
+-    <style name="OverlayBottomNavColors">
+-        <item name="colorContainer">#00000000</item>
+-
+-        <item name="colorPrimary">#0056D2</item>
+-
+-        <item name="colorOnSurfaceVariant">#6B7280</item>
+-    </style>
+-
+-    <style name="BottomNavTextSize">
+-        <item name="android:textSize">10sp</item>
+-    </style>
+-</resources>
+\ No newline at end of file
++</resources>
+Index: app/src/main/res/drawable/ic_add.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:width=\"24dp\"\r\n    android:height=\"24dp\"\r\n    android:viewportWidth=\"24\"\r\n    android:viewportHeight=\"24\">\r\n    <path\r\n        android:fillColor=\"#FFFFFFFF\"\r\n        android:pathData=\"M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6v2Z\"/>\r\n</vector>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_add.xml b/app/src/main/res/drawable/ic_add.xml
+--- a/app/src/main/res/drawable/ic_add.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/drawable/ic_add.xml	(date 1781776376203)
+@@ -4,6 +4,6 @@
+     android:viewportWidth="24"
+     android:viewportHeight="24">
+     <path
+-        android:fillColor="#FFFFFFFF"
+-        android:pathData="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6v2Z"/>
+-</vector>
+\ No newline at end of file
++        android:fillColor="#FF000000"
++        android:pathData="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6v2Z" />
++</vector>
+Index: app/src/main/java/com/example/finalprojectinnobridge/viewmodels/MessageViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.finalprojectinnobridge.viewmodels\r\n\r\nimport androidx.lifecycle.LiveData\r\nimport androidx.lifecycle.MutableLiveData\r\nimport androidx.lifecycle.ViewModel\r\nimport com.example.finalprojectinnobridge.models.Message\r\nimport com.example.finalprojectinnobridge.repositories.MessageRepository\r\n\r\nclass MessageViewModel : ViewModel() {\r\n\r\n    private val repository = MessageRepository()\r\n\r\n    private val _messages = MutableLiveData<List<Message>>()\r\n    val messages: LiveData<List<Message>> = _messages\r\n\r\n    private val _sendStatus = MutableLiveData<Pair<Boolean, String?>>()\r\n    val sendStatus: LiveData<Pair<Boolean, String?>> = _sendStatus\r\n\r\n    private val _isLoading = MutableLiveData<Boolean>()\r\n    val isLoading: LiveData<Boolean> = _isLoading\r\n\r\n    private val _error = MutableLiveData<String?>()\r\n    val error: LiveData<String?> = _error\r\n\r\n    fun sendMessage(message: Message, callback: (Boolean, String?) -> Unit) {\r\n        repository.sendMessage(message) { success, err ->\r\n            _sendStatus.postValue(Pair(success, err))\r\n            callback(success, err)\r\n        }\r\n    }\r\n\r\n    // Dipakai untuk inbox (ambil semua chat user)\r\n    // Dipakai untuk chat room (antara dua user spesifik)\r\n    fun fetchMessages(senderId: String, receiverId: String) {\r\n        _isLoading.value = true\r\n        repository.getMessages(senderId, receiverId) { list, err ->\r\n            _isLoading.postValue(false)\r\n            if (err == null) {\r\n                _messages.postValue(list)\r\n            } else {\r\n                _error.postValue(err)\r\n            }\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/finalprojectinnobridge/viewmodels/MessageViewModel.kt b/app/src/main/java/com/example/finalprojectinnobridge/viewmodels/MessageViewModel.kt
+--- a/app/src/main/java/com/example/finalprojectinnobridge/viewmodels/MessageViewModel.kt	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/java/com/example/finalprojectinnobridge/viewmodels/MessageViewModel.kt	(date 1781771589834)
+@@ -42,4 +42,9 @@
+             }
+         }
+     }
++
++    override fun onCleared() {
++        super.onCleared()
++        repository.clearAllListeners()
++    }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChatRoomFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChatRoomFragment.kt b/app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChatRoomFragment.kt
+new file mode 100644
+--- /dev/null	(date 1781772508505)
++++ b/app/src/main/java/com/example/finalprojectinnobridge/mahasiswa/ChatRoomFragment.kt	(date 1781772508505)
+@@ -0,0 +1,141 @@
++package com.example.finalprojectinnobridge.mahasiswa
++
++import android.os.Bundle
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import android.widget.Toast
++import androidx.fragment.app.Fragment
++import androidx.fragment.app.viewModels
++import androidx.navigation.fragment.findNavController
++import androidx.recyclerview.widget.LinearLayoutManager
++import com.example.finalprojectinnobridge.adapters.ChatRoomAdapter
++import com.example.finalprojectinnobridge.databinding.FragmentChatRoomBinding
++import com.example.finalprojectinnobridge.models.Message
++import com.example.finalprojectinnobridge.utils.SessionManager
++import com.example.finalprojectinnobridge.viewmodels.MessageViewModel
++
++class ChatRoomFragment : Fragment() {
++
++    private var _binding: FragmentChatRoomBinding? = null
++    private val binding get() = _binding!!
++
++    private val viewModel: MessageViewModel by viewModels()
++    private lateinit var adapter: ChatRoomAdapter
++    private lateinit var myId: String
++    private lateinit var myName: String
++    private lateinit var partnerId: String
++    private lateinit var partnerName: String
++
++    override fun onCreateView(
++        inflater: LayoutInflater, container: ViewGroup?,
++        savedInstanceState: Bundle?
++    ): View {
++        _binding = FragmentChatRoomBinding.inflate(inflater, container, false)
++        return binding.root
++    }
++
++    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
++        super.onViewCreated(view, savedInstanceState)
++
++        val sessionManager = SessionManager(requireContext())
++        myId = sessionManager.getUserId() ?: ""
++        myName = sessionManager.getUserName() ?: "Mahasiswa"
++        partnerId = arguments?.getString("partnerId") ?: ""
++        partnerName = arguments?.getString("partnerName") ?: ""
++
++        if (myId.isEmpty()) {
++            showErrorAndGoBack("User ID tidak ditemukan. Silakan login kembali.")
++            return
++        }
++
++        if (partnerId.isEmpty()) {
++            showErrorAndGoBack("Partner ID tidak ditemukan. Silakan pilih partner yang valid.")
++            return
++        }
++
++        if (partnerName.isEmpty()) {
++            partnerName = "Perusahaan ($partnerId)"
++        }
++
++        setupRecyclerView()
++        observeMessages()
++        setupSendButton()
++
++        viewModel.fetchMessages(myId, partnerId)
++    }
++
++    private fun setupRecyclerView() {
++        adapter = ChatRoomAdapter(myId, showAvatars = true)
++        binding.rvChatRoom.apply {
++            layoutManager = LinearLayoutManager(requireContext()).also {
++                it.stackFromEnd = true
++            }
++            adapter = this@ChatRoomFragment.adapter
++        }
++    }
++
++    private fun observeMessages() {
++        viewModel.messages.observe(viewLifecycleOwner) { messages ->
++            if (messages != null) {
++                adapter.submitList(messages)
++                if (messages.isNotEmpty()) {
++                    binding.rvChatRoom.scrollToPosition(messages.size - 1)
++                }
++            }
++        }
++
++        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
++            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
++        }
++
++        viewModel.error.observe(viewLifecycleOwner) { err ->
++            err?.let {
++                Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
++            }
++        }
++    }
++
++    private fun setupSendButton() {
++        binding.btnSend.setOnClickListener {
++            val text = binding.etMessage.text.toString().trim()
++            if (text.isEmpty()) {
++                Toast.makeText(requireContext(), "Pesan tidak boleh kosong", Toast.LENGTH_SHORT).show()
++                return@setOnClickListener
++            }
++
++            val message = Message(
++                senderId = myId,
++                senderName = myName,
++                receiverId = partnerId,
++                receiverName = partnerName,
++                message = text,
++                timestamp = System.currentTimeMillis()
++            )
++
++            viewModel.sendMessage(message) { success, err ->
++                activity?.runOnUiThread {
++                    if (success) {
++                        binding.etMessage.text?.clear()
++                    } else {
++                        Toast.makeText(requireContext(), "Gagal kirim: $err", Toast.LENGTH_SHORT).show()
++                    }
++                }
++            }
++        }
++    }
++
++    private fun showErrorAndGoBack(message: String) {
++        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
++        try {
++            findNavController().popBackStack()
++        } catch (e: Exception) {
++            e.printStackTrace()
++        }
++    }
++
++    override fun onDestroyView() {
++        super.onDestroyView()
++        _binding = null
++    }
++}
+Index: app/src/main/java/com/example/finalprojectinnobridge/adapters/ChatRoomAdapter.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/finalprojectinnobridge/adapters/ChatRoomAdapter.kt b/app/src/main/java/com/example/finalprojectinnobridge/adapters/ChatRoomAdapter.kt
+new file mode 100644
+--- /dev/null	(date 1781773191484)
++++ b/app/src/main/java/com/example/finalprojectinnobridge/adapters/ChatRoomAdapter.kt	(date 1781773191484)
+@@ -0,0 +1,137 @@
++package com.example.finalprojectinnobridge.adapters
++
++import android.view.LayoutInflater
++import android.view.ViewGroup
++import androidx.recyclerview.widget.DiffUtil
++import androidx.recyclerview.widget.ListAdapter
++import androidx.recyclerview.widget.RecyclerView
++import com.example.finalprojectinnobridge.databinding.ItemChatReceiveBinding
++import com.example.finalprojectinnobridge.databinding.ItemChatReceiveWithAvatarBinding
++import com.example.finalprojectinnobridge.databinding.ItemChatSendBinding
++import com.example.finalprojectinnobridge.databinding.ItemChatSendWithAvatarBinding
++import com.example.finalprojectinnobridge.models.Message
++import java.text.SimpleDateFormat
++import java.util.Date
++import java.util.Locale
++
++class ChatRoomAdapter(
++    private val myId: String,
++    private val showAvatars: Boolean = true
++) : ListAdapter<Message, RecyclerView.ViewHolder>(DiffCallback()) {
++
++    companion object {
++        private const val VIEW_TYPE_SEND = 1
++        private const val VIEW_TYPE_RECEIVE = 2
++        private const val VIEW_TYPE_SEND_WITH_AVATAR = 3
++        private const val VIEW_TYPE_RECEIVE_WITH_AVATAR = 4
++    }
++
++    override fun getItemViewType(position: Int): Int {
++        val isSender = getItem(position).senderId == myId
++        return if (showAvatars) {
++            if (isSender) VIEW_TYPE_SEND_WITH_AVATAR else VIEW_TYPE_RECEIVE_WITH_AVATAR
++        } else {
++            if (isSender) VIEW_TYPE_SEND else VIEW_TYPE_RECEIVE
++        }
++    }
++
++    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
++        return when (viewType) {
++            VIEW_TYPE_SEND -> {
++                val binding = ItemChatSendBinding.inflate(
++                    LayoutInflater.from(parent.context), parent, false
++                )
++                SendViewHolder(binding)
++            }
++            VIEW_TYPE_RECEIVE -> {
++                val binding = ItemChatReceiveBinding.inflate(
++                    LayoutInflater.from(parent.context), parent, false
++                )
++                ReceiveViewHolder(binding)
++            }
++            VIEW_TYPE_SEND_WITH_AVATAR -> {
++                val binding = ItemChatSendWithAvatarBinding.inflate(
++                    LayoutInflater.from(parent.context), parent, false
++                )
++                SendViewHolderWithAvatar(binding)
++            }
++            else -> {
++                val binding = ItemChatReceiveWithAvatarBinding.inflate(
++                    LayoutInflater.from(parent.context), parent, false
++                )
++                ReceiveViewHolderWithAvatar(binding)
++            }
++        }
++    }
++
++    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
++        val message = getItem(position)
++        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(message.timestamp))
++        when (holder) {
++            is SendViewHolder -> holder.bind(message, time)
++            is ReceiveViewHolder -> holder.bind(message, time)
++            is SendViewHolderWithAvatar -> holder.bind(message, time)
++            is ReceiveViewHolderWithAvatar -> holder.bind(message, time)
++        }
++    }
++
++    // --- Simple view holders (tanpa avatar) ---
++
++    inner class SendViewHolder(
++        private val binding: ItemChatSendBinding
++    ) : RecyclerView.ViewHolder(binding.root) {
++        fun bind(message: Message, time: String) {
++            binding.tvMessage.text = message.message
++            binding.tvTime.text = time
++        }
++    }
++
++    inner class ReceiveViewHolder(
++        private val binding: ItemChatReceiveBinding
++    ) : RecyclerView.ViewHolder(binding.root) {
++        fun bind(message: Message, time: String) {
++            binding.tvMessage.text = message.message
++            binding.tvTime.text = time
++        }
++    }
++
++    // --- View holders dengan avatar (gaya WhatsApp) ---
++
++    inner class SendViewHolderWithAvatar(
++        private val binding: ItemChatSendWithAvatarBinding
++    ) : RecyclerView.ViewHolder(binding.root) {
++        fun bind(message: Message, time: String) {
++            val name = message.senderName.ifEmpty { "Saya" }
++            // Nama di atas bubble
++            binding.tvSenderName.text = name
++            // Inisial avatar (huruf pertama nama)
++            binding.tvSenderAvatar.text = name.first().uppercaseChar().toString()
++            binding.tvMessage.text = message.message
++            binding.tvTime.text = time
++        }
++    }
++
++    inner class ReceiveViewHolderWithAvatar(
++        private val binding: ItemChatReceiveWithAvatarBinding
++    ) : RecyclerView.ViewHolder(binding.root) {
++        fun bind(message: Message, time: String) {
++            val name = message.senderName.ifEmpty { "?" }
++            // Nama di atas bubble
++            binding.tvReceiverName.text = name
++            // Inisial avatar (huruf pertama nama)
++            binding.tvAvatarInitial.text = name.first().uppercaseChar().toString()
++            binding.tvMessage.text = message.message
++            binding.tvTime.text = time
++        }
++    }
++
++    class DiffCallback : DiffUtil.ItemCallback<Message>() {
++        override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
++            return oldItem.messageId == newItem.messageId
++        }
++
++        override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
++            return oldItem == newItem
++        }
++    }
++}
+Index: app/src/main/res/layout/fragment_chat_list_perusahaan.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:orientation=\"vertical\"\r\n    android:background=\"@color/background_light\">\r\n\r\n    <TextView\r\n        android:id=\"@+id/tvEmptyChat\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_gravity=\"center\"\r\n        android:layout_marginTop=\"80dp\"\r\n        android:text=\"Belum ada percakapan\"\r\n        android:textColor=\"@color/text_light_grey\"\r\n        android:textSize=\"14sp\"\r\n        android:visibility=\"gone\" />\r\n\r\n    <androidx.recyclerview.widget.RecyclerView\r\n        android:id=\"@+id/rvChatList\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:clipToPadding=\"false\"\r\n        android:paddingVertical=\"8dp\" />\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_chat_list_perusahaan.xml b/app/src/main/res/layout/fragment_chat_list_perusahaan.xml
+--- a/app/src/main/res/layout/fragment_chat_list_perusahaan.xml	(revision 150378ef02baaae5c1ba1511ae6c04d61e786958)
++++ b/app/src/main/res/layout/fragment_chat_list_perusahaan.xml	(date 1781773206937)
+@@ -1,26 +1,52 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    android:orientation="vertical"
+-    android:background="@color/background_light">
++    android:background="@color/background_light">
++
++    <androidx.recyclerview.widget.RecyclerView
++        android:id="@+id/rvChatList"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:clipToPadding="false"
++        android:paddingTop="8dp"
++        android:paddingBottom="96dp" />
++
++    <!-- Empty state: ditampilkan di tengah saat tidak ada chat -->
++    <LinearLayout
++        android:id="@+id/layoutEmptyChat"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_gravity="center"
++        android:orientation="vertical"
++        android:gravity="center"
++        android:visibility="gone">
++
++        <TextView
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="💬"
++            android:textSize="48sp" />
+ 
+-    <TextView
+-        android:id="@+id/tvEmptyChat"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:layout_gravity="center"
+-        android:layout_marginTop="80dp"
+-        android:text="Belum ada percakapan"
+-        android:textColor="@color/text_light_grey"
+-        android:textSize="14sp"
+-        android:visibility="gone" />
++        <TextView
++            android:id="@+id/tvEmptyChat"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="12dp"
++            android:text="Belum ada percakapan"
++            android:textColor="@color/text_navy"
++            android:textSize="16sp"
++            android:textStyle="bold" />
++
++        <TextView
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="6dp"
++            android:text="Mulai chat dengan mahasiswa dari\nhalaman daftar proposal"
++            android:textColor="@color/text_light_grey"
++            android:textSize="13sp"
++            android:gravity="center" />
+ 
+-    <androidx.recyclerview.widget.RecyclerView
+-        android:id="@+id/rvChatList"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent"
+-        android:clipToPadding="false"
+-        android:paddingVertical="8dp" />
++    </LinearLayout>
+ 
+-</LinearLayout>
+\ No newline at end of file
++</FrameLayout>
