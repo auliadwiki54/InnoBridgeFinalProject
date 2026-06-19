@@ -63,14 +63,15 @@ class SubmitProposalFragment : Fragment() {
             val judul = binding.etJudul.text.toString().trim()
             val solusi = binding.etSolusi.text.toString().trim()
             val videoUrl = binding.etVideoUrl.text.toString().trim()
+            val proposalLink = binding.etProposalLink.text.toString().trim()
 
             if (judul.isEmpty() || solusi.isEmpty()) {
                 Toast.makeText(requireContext(), "Harap isi judul dan solusi", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if (selectedPdfUri == null) {
-                Toast.makeText(requireContext(), "Harap pilih dokumen PDF proposal", Toast.LENGTH_SHORT).show()
+            if (selectedPdfUri == null && proposalLink.isEmpty()) {
+                Toast.makeText(requireContext(), "Harap pilih dokumen PDF atau masukkan link proposal", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -79,11 +80,15 @@ class SubmitProposalFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            uploadPdfAndSubmit(judul, solusi, videoUrl)
+            if (selectedPdfUri != null) {
+                uploadPdfAndSubmit(judul, solusi, videoUrl, proposalLink)
+            } else {
+                submitProposalWithoutPdf(judul, solusi, videoUrl, proposalLink)
+            }
         }
     }
 
-    private fun uploadPdfAndSubmit(judul: String, solusi: String, videoUrl: String) {
+    private fun uploadPdfAndSubmit(judul: String, solusi: String, videoUrl: String, proposalLink: String) {
         val sessionManager = SessionManager(requireContext())
         val userId = sessionManager.getUserId() ?: ""
         val userName = sessionManager.getUserName() ?: ""
@@ -127,6 +132,38 @@ class SubmitProposalFragment : Fragment() {
                     binding.btnSubmit.isEnabled = true
                     Toast.makeText(requireContext(), "Gagal upload PDF: ${it.message}", Toast.LENGTH_SHORT).show()
                 }
+        }
+    }
+
+    private fun submitProposalWithoutPdf(judul: String, solusi: String, videoUrl: String, proposalLink: String) {
+        val sessionManager = SessionManager(requireContext())
+        val userId = sessionManager.getUserId() ?: ""
+        val userName = sessionManager.getUserName() ?: ""
+        
+        binding.progressBar.visibility = View.VISIBLE
+        binding.btnSubmit.isEnabled = false
+
+        val proposal = Proposal(
+            challengeId = challengeId ?: "",
+            userId = userId,
+            userName = userName,
+            userUniversity = "Universitas Inovasi", // Placeholder
+            judul = judul,
+            solusi = solusi,
+            pitchVideo = videoUrl,
+            pdfUrl = proposalLink,
+            status = "Pending"
+        )
+
+        viewModel.submitProposal(proposal) { success, message ->
+            binding.progressBar.visibility = View.GONE
+            binding.btnSubmit.isEnabled = true
+            if (success) {
+                Toast.makeText(requireContext(), "Proposal berhasil dikirim", Toast.LENGTH_SHORT).show()
+                findNavController().navigateUp()
+            } else {
+                Toast.makeText(requireContext(), message ?: "Gagal mengirim proposal", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

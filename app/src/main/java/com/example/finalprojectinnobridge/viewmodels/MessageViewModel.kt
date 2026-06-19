@@ -42,4 +42,13 @@ class MessageViewModel : ViewModel() {
             }
         }
     }
+
+    fun clearListeners() {
+        repository.clearAllListeners()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        clearListeners()
+    }
 }

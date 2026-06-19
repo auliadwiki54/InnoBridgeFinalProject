@@ -32,7 +32,15 @@ class MessageRepository {
         val key = if (receiverId.isEmpty()) "inbox_$senderId" else "room_${chatRoomId(senderId, receiverId)}"
         
         // Remove existing listener for this key if any
-        listeners[key]?.let { db.removeEventListener(it) }
+        listeners[key]?.let { listener ->
+            if (key.startsWith("room_")) {
+                val roomId = key.removePrefix("room_")
+                db.child(roomId).removeEventListener(listener)
+            } else {
+                db.removeEventListener(listener)
+            }
+        }
+        listeners.remove(key)
 
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -60,13 +68,14 @@ class MessageRepository {
             }
         }
 
+        // Use persistent listener for both inbox and chat room (real-time updates)
         if (receiverId.isEmpty()) {
             db.addValueEventListener(listener)
+            listeners[key] = listener
         } else {
             db.child(chatRoomId(senderId, receiverId)).addValueEventListener(listener)
+            listeners[key] = listener
         }
-        
-        listeners[key] = listener
     }
 
     fun clearAllListeners() {

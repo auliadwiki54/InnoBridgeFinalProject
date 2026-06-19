@@ -6,29 +6,11 @@
     android:layout_height="match_parent"
     android:background="#F8FAFF">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary_navy"
-        app:elevation="0dp">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_home"
-            app:navigationIconTint="@color/white"
-            app:title="Detail Tantangan"
-            app:titleTextColor="@color/white" />
-    </com.google.android.material.appbar.AppBarLayout>
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="120dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:paddingBottom="120dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,21 +18,24 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- Badge Header Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_badge"
-                    android:backgroundTint="@color/primary_blue"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="4dp"
+                    android:backgroundTint="@color/status_diterima_bg"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
                     android:text="Active"
-                    android:textColor="@color/white"
-                    android:textSize="10sp" />
+                    android:textColor="@color/status_diterima_text"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tv_kategori"
@@ -58,14 +43,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:background="@drawable/bg_badge"
-                    android:backgroundTint="#E8EAF6"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="4dp"
+                    android:backgroundTint="@color/status_proses_bg"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
                     android:text="Sustainability"
-                    android:textColor="@color/primary_blue"
-                    android:textSize="10sp" />
+                    android:textColor="@color/status_proses_text"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
+            <!-- Title -->
             <TextView
                 android:id="@+id/tv_judul"
                 android:layout_width="match_parent"
@@ -76,58 +63,202 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tv_perusahaan"
+            <!-- Company Info Row -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="EcoLogistics Ltd."
-                android:textColor="@color/text_grey"
-                android:textSize="14sp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp">
 
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#E5E7EB"
+                    app:strokeWidth="1dp">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_profile"
+                        android:padding="6dp"
+                        app:tint="@color/text_grey"
+                        android:contentDescription="Company Logo" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/tv_perusahaan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="EcoLogistics Ltd."
+                    android:textColor="@color/text_navy"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Banner Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:layout_marginTop="20dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
                 app:strokeWidth="0dp">
                 <ImageView
                     android:id="@+id/iv_banner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@color/primary_navy" />
+                    android:src="@color/primary_navy"
+                    android:contentDescription="Challenge Banner" />
             </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Problem Statement"
-                android:textColor="@color/text_navy"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tv_deskripsi"
+            <!-- Info Column (Deadline & Reward cards side by side) -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Challenge description goes here..."
-                android:textColor="@color/text_grey"
-                android:textSize="14sp"
-                android:lineSpacingExtra="5dp" />
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:weightSum="2">
 
+                <!-- Deadline Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardBackgroundColor="@color/status_ditolak_bg"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_challenge"
+                            app:tint="@color/status_ditolak_text"
+                            android:contentDescription="Calendar Icon" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="DEADLINE"
+                            android:textColor="@color/status_ditolak_text"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tv_deadline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="October 24, 2026"
+                            android:textColor="@color/status_ditolak_text"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Reward Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    app:cardBackgroundColor="@color/status_diterima_bg"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_innovation"
+                            app:tint="@color/status_diterima_text"
+                            android:contentDescription="Reward Icon" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="REWARD"
+                            android:textColor="@color/status_diterima_text"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tv_reward"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Rp 25.000.000"
+                            android:textColor="@color/status_diterima_text"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Problem Statement Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="20dp"
                 app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="18dp"
+                            android:background="@color/primary_blue" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Problem Statement"
+                            android:textColor="@color/text_navy"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tv_deskripsi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Challenge description goes here..."
+                        android:textColor="@color/text_grey"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="6dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- IP Agreement Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="#F3F0FC"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:strokeColor="@color/secondary_blue"
-                app:strokeWidth="1dp">
+                app:strokeWidth="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -137,9 +268,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/ic_innovation"
+                        android:drawableTint="@color/primary_navy"
                         android:drawablePadding="8dp"
                         android:text="Transparent Licensing &amp; IP Agreement"
-                        android:textColor="@color/text_navy"
+                        android:textColor="@color/primary_navy"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                     <TextView
@@ -149,123 +281,73 @@
                         android:layout_marginTop="8dp"
                         android:text="We believe in fair innovation. By submitting a solution, you are protected by our platform's transparent intellectual property agreement."
                         android:textColor="@color/text_grey"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:lineSpacingExtra="4dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Challenge Details"
-                android:textColor="@color/text_navy"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/secondary_blue"
-                app:strokeWidth="1dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="SUBMISSION DEADLINE"
-                        android:textColor="@color/text_light_grey"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/tv_deadline"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="October 24, 2026"
-                        android:textColor="@color/text_navy"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="12dp" android:background="@color/secondary_blue" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TOTAL REWARD"
-                        android:textColor="@color/text_light_grey"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/tv_reward"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Rp 25.000.000"
-                        android:textColor="@color/text_navy"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Resources"
-                android:textColor="@color/text_navy"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
+            <!-- Resources Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btn_download_resource"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/secondary_blue"
-                app:strokeWidth="1dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="14dp">
+                    android:padding="16dp">
                     <ImageView
                         android:id="@+id/iv_doc_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_innovation"
-                        app:tint="@color/primary_blue" />
-                    <TextView
+                        android:src="@drawable/ic_challenge"
+                        app:tint="@color/primary_blue"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="Doc Icon" />
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/iv_doc_icon"
                         android:layout_marginStart="12dp"
-                        android:text="Sample Route Dataset.csv"
-                        android:textColor="@color/text_navy"
-                        android:textStyle="bold"
-                        android:textSize="13sp"/>
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Berkas Lampiran"
+                            android:textColor="@color/text_navy"
+                            android:textStyle="bold"
+                            android:textSize="13sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Unduh petunjuk teknis &amp; dataset"
+                            android:textColor="@color/text_grey"
+                            android:textSize="11sp"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
                 </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Floating Action bar Sheet at the bottom -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="24dp"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="12dp"
         app:strokeWidth="0dp"
         app:cardBackgroundColor="@color/white">
 
@@ -273,35 +355,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="28dp"
+            android:padding="12dp"
             android:weightSum="2">
 
             <Button
                 android:id="@+id/btn_chat_perusahaan"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
-                android:layout_height="54dp"
+                android:layout_height="52dp"
                 android:layout_weight="0.6"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="8dp"
                 android:text="Chat"
                 android:textColor="@color/primary_navy"
                 android:textStyle="bold"
                 app:strokeColor="@color/primary_navy"
                 app:strokeWidth="1.5dp"
-                app:cornerRadius="14dp" />
+                app:cornerRadius="12dp" />
 
             <Button
                 android:id="@+id/btn_ajukan"
                 android:layout_width="0dp"
-                android:layout_height="54dp"
+                android:layout_height="52dp"
                 android:layout_weight="1.4"
                 android:backgroundTint="@color/primary_navy"
                 android:text="Apply Now"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                app:cornerRadius="14dp" />
+                app:cornerRadius="12dp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

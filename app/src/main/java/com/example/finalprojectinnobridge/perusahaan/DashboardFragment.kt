@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -23,6 +24,8 @@ class DashboardFragment : Fragment() {
     private val proposalViewModel: ProposalViewModel by viewModels()
     private lateinit var challengeAdapter: ChallengeAdapter
 
+    private val myChallengeIds = mutableListOf<String>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,10 +37,21 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val companyName = SessionManager(requireContext()).getUserName() ?: "Perusahaan"
+        binding.tvCompanyName.text = companyName
+
+        binding.btnCreateChallengeHeader.setOnClickListener {
+            findNavController().navigate(R.id.navigation_add_challenge)
+        }
+        binding.btnCreateChallengeEmpty.setOnClickListener {
+            findNavController().navigate(R.id.navigation_add_challenge)
+        }
+
         setupRecyclerView()
+        setupSearchView()
+        setupStatCardClicks()
         observeViewModel()
 
-        // Memicu pengambilan data master tantangan dari database
         challengeViewModel.fetchChallenges()
     }
 
@@ -55,32 +69,97 @@ class DashboardFragment : Fragment() {
         }
     }
 
+    private fun setupSearchView() {
+        binding.searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                applyChallengesFilter(newText ?: "")
+                return true
+            }
+        })
+    }
+
+    private fun setupStatCardClicks() {
+        binding.cvActiveChallenges.setOnClickListener {
+            // Premium scale bounce animation on tap
+            binding.cvActiveChallenges.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).withEndAction {
+                binding.cvActiveChallenges.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start()
+            }.start()
+            Toast.makeText(requireContext(), "Menampilkan semua tantangan Anda", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.cvTotalApplicants.setOnClickListener {
+            binding.cvTotalApplicants.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).withEndAction {
+                binding.cvTotalApplicants.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).withEndAction {
+                    try {
+                        findNavController().navigate(R.id.action_dashboard_to_applicant_list)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }.start()
+            }.start()
+        }
+
+        binding.cvPendingReview.setOnClickListener {
+            binding.cvPendingReview.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).withEndAction {
+                binding.cvPendingReview.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).withEndAction {
+                    try {
+                        findNavController().navigate(R.id.navigation_proposal_list)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }.start()
+            }.start()
+        }
+    }
+
+    private fun applyChallengesFilter(searchQuery: String = binding.searchView.query?.toString() ?: "") {
+        val userId = SessionManager(requireContext()).getUserId() ?: ""
+        val allChallenges = challengeViewModel.challenges.value ?: emptyList()
+        val myChallenges = allChallenges.filter { it.perusahaanId == userId }
+
+        var filtered = myChallenges
+
+        if (searchQuery.isNotEmpty()) {
+            filtered = filtered.filter {
+                it.judul.contains(searchQuery, ignoreCase = true) ||
+                it.deskripsi.contains(searchQuery, ignoreCase = true)
+            }
+        }
+
+        challengeAdapter.updateData(filtered)
+    }
+
     private fun observeViewModel() {
         val userId = SessionManager(requireContext()).getUserId() ?: ""
 
-        // Buat list penampung ID tantangan milik perusahaan ini agar bisa diakses oleh observer proposal
-        val myChallengeIds = mutableListOf<String>()
-
-        // 1. Mengamati data Tantangan (Challenges)
         challengeViewModel.challenges.observe(viewLifecycleOwner) { challenges ->
-            // Saring tantangan yang dibuat oleh ID Perusahaan yang sedang login
             val myChallenges = challenges.filter { it.perusahaanId == userId }
-            challengeAdapter.updateData(myChallenges)
+            val isEmpty = myChallenges.isEmpty()
+            binding.layoutEmptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
+            binding.rvMyChallenges.visibility = if (isEmpty) View.GONE else View.VISIBLE
 
-            // Simpan semua ID tantangan milik kita ke dalam list penampung
             myChallengeIds.clear()
             myChallengeIds.addAll(myChallenges.map { it.challengeId })
 
-            // Set teks indikator jumlah tantangan aktif
-            binding.tvActiveCount.text = myChallenges.count { it.status == "Aktif" }.toString()
+            binding.tvActiveCount.text = myChallenges.size.toString()
+
+            applyChallengesFilter()
         }
 
-        // 2. Mengamati data Proposal Masuk (Menghitung Total Pelamar Berdasarkan challengeId)
         proposalViewModel.proposals.observe(viewLifecycleOwner) { proposals ->
-            // FIX LOGIC: Hitung proposal yang nilai challengeId-nya ada di dalam daftar tantangan perusahaan kita
-            val totalApplicants = proposals.count { it.challengeId in myChallengeIds }
+            val myProposals = proposals.filter { it.challengeId in myChallengeIds }
+            val totalApplicants = myProposals.size
             binding.tvTotalApplicantsCount.text = totalApplicants.toString()
+
+            val pendingReviewCount = myProposals.count { it.status == "Pending" || it.status == "Review" }
+            binding.tvPendingCount.text = pendingReviewCount.toString()
         }
+        
+        proposalViewModel.listenToAllProposals()
     }
 
     override fun onDestroyView() {

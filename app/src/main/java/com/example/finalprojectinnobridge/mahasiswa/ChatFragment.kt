@@ -84,7 +84,7 @@ class ChatFragment : Fragment() {
                     } else {
                         null
                     }
-                }
+                }.sortedByDescending { it.timestamp }
 
                 chatListAdapter.updateData(latestMessages)
                 binding.rvChatList.visibility = if (latestMessages.isEmpty()) View.GONE else View.VISIBLE

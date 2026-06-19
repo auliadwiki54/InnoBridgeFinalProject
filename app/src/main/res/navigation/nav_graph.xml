@@ -123,6 +123,9 @@
         <action
             android:id="@+id/action_dashboard_to_edit_challenge"
             app:destination="@id/navigation_edit_challenge" />
+        <action
+            android:id="@+id/action_dashboard_to_applicant_list"
+            app:destination="@id/navigation_applicant_list" />
     </fragment>
 
     <fragment
@@ -132,7 +135,7 @@
         tools:layout="@layout/fragment_chat_list_perusahaan">
         <action
             android:id="@+id/action_chat_perusahaan_to_chat_room"
-            app:destination="@id/navigation_chat_room" />
+            app:destination="@id/navigation_chat_room_perusahaan" />
     </fragment>
 
     <fragment
@@ -158,7 +161,7 @@
             app:destination="@id/navigation_give_score" />
         <action
             android:id="@+id/action_navigation_proposal_list_to_navigation_chat_room"
-            app:destination="@id/navigation_chat_room" />
+            app:destination="@id/navigation_chat_room_perusahaan" />
     </fragment>
 
     <fragment
@@ -201,6 +204,23 @@
     </fragment>
 
     <fragment
+        android:id="@+id/navigation_chat_room_perusahaan"
+        android:name="com.example.finalprojectinnobridge.perusahaan.ChatRoomPerusahaanFragment"
+        android:label="Ruang Chat"
+        tools:layout="@layout/fragment_chat_room">
+        <argument
+            android:name="partnerId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="partnerName"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
         android:id="@+id/editProfileFragment"
         android:name="com.example.finalprojectinnobridge.auth.EditProfileFragment"
         android:label="Edit Profil"
@@ -214,6 +234,9 @@
         <argument
             android:name="proposalId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_proposal_detail_to_chat_room_perusahaan"
+            app:destination="@id/navigation_chat_room_perusahaan" />
     </fragment>
 
     <fragment
@@ -230,6 +253,16 @@
         <argument
             android:name="userName"
             app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_applicant_list"
+        android:name="com.example.finalprojectinnobridge.perusahaan.ApplicantListFragment"
+        android:label="Daftar Pelamar"
+        tools:layout="@layout/fragment_applicant_list">
+        <action
+            android:id="@+id/action_applicant_list_to_chat_room"
+            app:destination="@id/navigation_chat_room_perusahaan" />
     </fragment>
 
 </navigation>

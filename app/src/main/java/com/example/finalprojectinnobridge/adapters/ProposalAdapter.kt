@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.finalprojectinnobridge.databinding.ItemProposalBinding
 import com.example.finalprojectinnobridge.models.Proposal
+import com.example.finalprojectinnobridge.R
 import com.example.finalprojectinnobridge.utils.Constants
 import com.example.finalprojectinnobridge.utils.SessionManager
 import java.text.SimpleDateFormat
@@ -36,7 +37,28 @@ class ProposalAdapter(
             tvUniversity.text = item.userUniversity.ifEmpty { "Universitas" }
             tvJudulSolusi.text = item.judul
             tvStatusBadge.text = item.status
-            tvScoreVal.text = item.score.toString()
+            
+            if (item.score > 0) {
+                tvScoreVal.text = item.score.toString()
+            } else {
+                tvScoreVal.text = "-"
+            }
+
+            // Dynamic status badge coloring
+            val statusBgColor = when (item.status.lowercase(Locale.getDefault())) {
+                "diterima" -> R.color.status_diterima_bg
+                "ditolak" -> R.color.status_ditolak_bg
+                "review" -> R.color.status_review_bg
+                else -> R.color.status_proses_bg // Pending
+            }
+            val statusTextColor = when (item.status.lowercase(Locale.getDefault())) {
+                "diterima" -> R.color.status_diterima_text
+                "ditolak" -> R.color.status_ditolak_text
+                "review" -> R.color.status_review_text
+                else -> R.color.status_proses_text // Pending
+            }
+            tvStatusBadge.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(context, statusBgColor)
+            tvStatusBadge.setTextColor(androidx.core.content.ContextCompat.getColor(context, statusTextColor))
             
             val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
             tvTanggal.text = "Submitted " + sdf.format(Date(item.tanggal))

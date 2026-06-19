@@ -45,11 +45,6 @@ class SplashFragment : Fragment() {
                 val myId = sessionManager.getUserId() ?: ""
                 val role = sessionManager.getUserRole()
                 
-                // Jalankan Simulasi Chat agar inbox terasa hidup
-                if (myId.isNotEmpty()) {
-                    SimulasiData.generateSimulasiChat(myId)
-                }
-
                 (activity as? MainActivity)?.updateBottomNavigation()
                 if (role == Constants.ROLE_MAHASISWA) {
                     findNavController().navigate(R.id.navigation_home)

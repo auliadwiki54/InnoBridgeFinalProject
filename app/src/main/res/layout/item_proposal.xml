@@ -8,8 +8,9 @@
     android:layout_marginVertical="8dp"
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:strokeWidth="0dp">
+    app:cardElevation="0dp"
+    app:strokeColor="@color/secondary_blue"
+    app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -119,6 +120,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/ll_score_info" />
 
+        <!-- Responsive actions container -->
         <LinearLayout
             android:id="@+id/ll_actions"
             android:layout_width="match_parent"
@@ -133,32 +135,38 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginEnd="4dp"
                 android:text="Detail"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                app:cornerRadius="12dp"
+                app:strokeColor="@color/primary_blue"
+                android:textColor="@color/primary_blue" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_contact"
                 style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp"
+                android:layout_width="48dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginHorizontal="4dp"
-                android:text="Chat"
+                android:layout_marginStart="8dp"
+                android:padding="0dp"
                 android:textAllCaps="false"
                 android:visibility="gone"
-                app:icon="@drawable/ic_chat" />
+                app:icon="@drawable/ic_chat"
+                app:iconPadding="0dp"
+                app:iconGravity="textStart"
+                app:cornerRadius="12dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_give_score"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="4dp"
+                android:layout_weight="1.2"
+                android:layout_marginStart="8dp"
                 android:backgroundTint="@color/primary_blue"
-                android:text="Skor"
+                android:text="Beri Skor"
                 android:textAllCaps="false"
-                android:visibility="gone" />
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:cornerRadius="12dp" />
 
         </LinearLayout>
 

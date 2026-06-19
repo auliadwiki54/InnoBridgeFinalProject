@@ -58,11 +58,12 @@ class ProfileFragment : Fragment() {
                 binding.tvEmail.text = it.email
                 binding.tvRole.text = it.role
                 binding.tvDescription.text = it.bio.ifEmpty { "Innovation Enthusiast" }
+                
+                binding.tvUniversity.text = it.universitas.ifEmpty { "Belum diatur" }
+                binding.tvMajor.text = it.jurusan.ifEmpty { "Belum diatur" }
+                binding.tvSkills.text = it.keahlian.ifEmpty { "Belum diatur" }
             }
         }
-
-        binding.tvXpVal.text = "8.450"
-        binding.tvImpactVal.text = "92%"
     }
 
     private fun setupRecyclerView() {
@@ -95,7 +96,27 @@ class ProfileFragment : Fragment() {
         proposalListener = com.example.finalprojectinnobridge.repositories.ProposalRepository().listenProposalsByUser(userId) { listProposal, error ->
             if (error == null) {
                 proposalAdapter.updateData(listProposal)
-                binding.tvProposalVal.text = listProposal.size.toString()
+                
+                val totalSubmitted = listProposal.size
+                val acceptedSubmitted = listProposal.count { it.status.equals("Diterima", ignoreCase = true) }
+                
+                binding.tvProposalVal.text = totalSubmitted.toString()
+                
+                // Real-time XP: 100 XP per proposal submitted + 500 XP per accepted proposal
+                val xp = (totalSubmitted * 100) + (acceptedSubmitted * 500)
+                binding.tvXpVal.text = java.text.NumberFormat.getNumberInstance(java.util.Locale.US).format(xp)
+                
+                // Real-time Level: 1 + (XP / 1000)
+                val level = 1 + (xp / 1000)
+                binding.tvLevel.text = "Lvl $level"
+                
+                // Real-time Impact Score: (Accepted / Total) * 100%
+                val impactScore = if (totalSubmitted > 0) {
+                    (acceptedSubmitted.toDouble() / totalSubmitted * 100).toInt()
+                } else {
+                    0
+                }
+                binding.tvImpactVal.text = "$impactScore%"
             }
         }
     }

@@ -52,7 +52,7 @@ class ChatRoomAdapter(
         private val binding: ItemChatSendBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(message: Message, time: String) {
-            binding.tvMessage.text = message.message
+            binding.tvMessage.text = message.message ?: ""
             binding.tvTime.text = time
         }
     }
@@ -61,7 +61,7 @@ class ChatRoomAdapter(
         private val binding: ItemChatReceiveBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(message: Message, time: String) {
-            binding.tvMessage.text = message.message
+            binding.tvMessage.text = message.message ?: ""
             binding.tvTime.text = time
         }
     }
@@ -73,7 +73,8 @@ class ChatRoomAdapter(
         }
 
         override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
-            return oldItem.message == newItem.message && oldItem.senderId == newItem.senderId
+            return (oldItem.message ?: "") == (newItem.message ?: "") && 
+                   (oldItem.senderId ?: "") == (newItem.senderId ?: "")
         }
     }
 }

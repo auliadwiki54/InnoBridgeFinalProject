@@ -20,6 +20,8 @@ class MyProposalFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: ProposalViewModel by viewModels()
     private lateinit var proposalAdapter: ProposalAdapter
+    private var allProposalsList: List<com.example.finalprojectinnobridge.models.Proposal> = emptyList()
+    private var currentFilterStatus: String = "Semua"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +35,7 @@ class MyProposalFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+        setupFilterListeners()
         observeViewModel()
 
         val userId = SessionManager(requireContext()).getUserId() ?: ""
@@ -55,14 +58,39 @@ class MyProposalFragment : Fragment() {
         }
     }
 
+    private fun setupFilterListeners() {
+        binding.chipGroupFilters.setOnCheckedStateChangeListener { _, checkedIds ->
+            if (checkedIds.isNotEmpty()) {
+                currentFilterStatus = when (checkedIds.first()) {
+                    R.id.chip_all -> "Semua"
+                    R.id.chip_pending -> "Pending"
+                    R.id.chip_diterima -> "Diterima"
+                    R.id.chip_ditolak -> "Ditolak"
+                    else -> "Semua"
+                }
+                applyFilter()
+            }
+        }
+    }
+
+    private fun applyFilter() {
+        val filteredList = if (currentFilterStatus == "Semua") {
+            allProposalsList
+        } else {
+            allProposalsList.filter { it.status.equals(currentFilterStatus, ignoreCase = true) }
+        }
+        proposalAdapter.updateData(filteredList)
+        binding.tvEmpty.visibility = if (filteredList.isEmpty()) View.VISIBLE else View.GONE
+    }
+
     private fun observeViewModel() {
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
 
         viewModel.userProposals.observe(viewLifecycleOwner) { proposals ->
-            proposalAdapter.updateData(proposals)
-            binding.tvEmpty.visibility = if (proposals.isEmpty()) View.VISIBLE else View.GONE
+            allProposalsList = proposals ?: emptyList()
+            applyFilter()
         }
     }
 

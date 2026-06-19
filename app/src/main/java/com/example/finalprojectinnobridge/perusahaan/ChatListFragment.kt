@@ -53,6 +53,9 @@ class ChatListFragment : Fragment() {
                 return@ChatListAdapter
             }
 
+            // Clear listeners before navigating away
+            viewModel.clearListeners()
+
             val bundle = Bundle().apply {
                 putString("partnerId", partnerId)
                 putString("partnerName", partnerName.ifEmpty { "User ($partnerId)" })
@@ -84,7 +87,7 @@ class ChatListFragment : Fragment() {
                     } else {
                         null
                     }
-                }
+                }.sortedByDescending { it.timestamp }
 
                 chatListAdapter.updateData(latestMessages)
                 binding.tvEmptyChat.visibility = if (latestMessages.isEmpty()) View.VISIBLE else View.GONE
@@ -102,6 +105,7 @@ class ChatListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.clearListeners()
         _binding = null
     }
 }

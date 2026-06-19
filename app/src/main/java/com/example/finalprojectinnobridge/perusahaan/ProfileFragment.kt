@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.finalprojectinnobridge.R
@@ -21,11 +22,11 @@ class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfilePerusahaanBinding? = null
     private val binding get() = _binding!!
-    
+
     private val authViewModel: AuthViewModel by viewModels()
     private val challengeViewModel: ChallengeViewModel by viewModels()
     private val proposalViewModel: ProposalViewModel by viewModels()
-    
+
     private lateinit var challengeAdapter: ChallengeAdapter
 
     override fun onCreateView(
@@ -42,56 +43,67 @@ class ProfileFragment : Fragment() {
         val sessionManager = SessionManager(requireContext())
         val userId = sessionManager.getUserId() ?: ""
 
-        setupUserData(userId)
         setupRecyclerView()
-        setupStatsLive(userId)
+        loadUserData(userId)
+        loadStats(userId)
         setupNavigation()
 
         binding.btnLogout.setOnClickListener {
             authViewModel.logout()
             sessionManager.clearSession()
             Toast.makeText(requireContext(), "Berhasil logout", Toast.LENGTH_SHORT).show()
-            requireActivity().finishAffinity()
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(R.id.nav_graph, true)
+                .build()
+            findNavController().navigate(R.id.fragment_login, null, navOptions)
         }
     }
 
-    private fun setupUserData(userId: String) {
+    private fun loadUserData(userId: String) {
         authViewModel.fetchUserData(userId)
         authViewModel.user.observe(viewLifecycleOwner) { user ->
             user?.let {
                 binding.tvName.text = it.nama
                 binding.tvEmail.text = it.email
-                // binding.tvRole.text = it.role // Jika ada di XML
+                // tvRole ada di layout — set ke role dari data
+                binding.tvRole.text = it.role
+
+                // Bind new dynamic company details fields
+                binding.tvCompanyDesc.text = it.bio.ifEmpty { "Belum diatur" }
+                binding.tvCompanyIndustry.text = it.industri.ifEmpty { "Belum diatur" }
+                binding.tvCompanyWebsite.text = it.website.ifEmpty { "Belum diatur" }
+                binding.tvCompanyAddress.text = it.alamat.ifEmpty { "Belum diatur" }
             }
         }
     }
 
     private fun setupRecyclerView() {
-        challengeAdapter = ChallengeAdapter(emptyList()) { challenge ->
-            // Action on click (optional)
-        }
+        challengeAdapter = ChallengeAdapter(emptyList()) { }
         binding.rvMyChallenges.apply {
             adapter = challengeAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
-    private fun setupStatsLive(userId: String) {
-        // Listen to challenges to count active ones and filter proposals
+    private fun loadStats(userId: String) {
+        // Observe challenges dulu — tidak nested dengan proposals
         challengeViewModel.challenges.observe(viewLifecycleOwner) { challenges ->
             val myChallenges = challenges.filter { it.perusahaanId == userId }
             binding.tvActiveChallenges.text = myChallenges.size.toString()
             challengeAdapter.updateData(myChallenges)
-
-            val myChallengeIds = myChallenges.map { it.challengeId }
-            
-            // Listen to all proposals and filter those belonging to this company's challenges
-            proposalViewModel.proposals.observe(viewLifecycleOwner) { allProposals ->
-                val receivedProposals = allProposals.filter { it.challengeId in myChallengeIds }
-                binding.tvTotalProposals.text = receivedProposals.size.toString()
-            }
         }
-        
+
+        // Observe proposals secara terpisah
+        proposalViewModel.proposals.observe(viewLifecycleOwner) { allProposals ->
+            // Hitung proposal yang masuk untuk challenge milik perusahaan ini
+            val myChallengeIds = challengeViewModel.challenges.value
+                ?.filter { it.perusahaanId == userId }
+                ?.map { it.challengeId }
+                ?: emptyList()
+            val receivedProposals = allProposals.filter { it.challengeId in myChallengeIds }
+            binding.tvTotalProposals.text = receivedProposals.size.toString()
+        }
+
         challengeViewModel.fetchChallenges()
         proposalViewModel.listenToAllProposals()
     }

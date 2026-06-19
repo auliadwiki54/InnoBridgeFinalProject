@@ -54,9 +54,50 @@ class ChatRoomFragment : Fragment() {
             return
         }
 
-        // Set toolbar title to partner name if available
+        // Bind custom WA-style header
         if (partnerName.isEmpty()) {
             partnerName = "User ($partnerId)"
+        }
+        binding.tvChatName.text = partnerName
+        binding.tvChatStatus.text = "Mitra InnoBridge"
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        // Fetch partner details from Firestore to show dynamic avatar
+        com.example.finalprojectinnobridge.repositories.UserRepository().getUserData(partnerId) { user, _ ->
+            if (isAdded && _binding != null) {
+                user?.let { u ->
+                    if (u.nama.isNotEmpty()) {
+                        partnerName = u.nama
+                        binding.tvChatName.text = partnerName
+                    }
+                    if (u.photoUrl.isNotEmpty()) {
+                        binding.ivChatAvatar.visibility = View.VISIBLE
+                        binding.tvChatAvatarInitial.visibility = View.GONE
+                        com.bumptech.glide.Glide.with(this)
+                            .load(u.photoUrl)
+                            .placeholder(com.example.finalprojectinnobridge.R.color.secondary_blue)
+                            .into(binding.ivChatAvatar)
+                    } else {
+                        binding.ivChatAvatar.visibility = View.GONE
+                        binding.tvChatAvatarInitial.visibility = View.VISIBLE
+                        binding.tvChatAvatarInitial.text = if (partnerName.isNotEmpty()) {
+                            partnerName.first().uppercaseChar().toString()
+                        } else {
+                            "?"
+                        }
+                    }
+                } ?: run {
+                    binding.ivChatAvatar.visibility = View.GONE
+                    binding.tvChatAvatarInitial.visibility = View.VISIBLE
+                    binding.tvChatAvatarInitial.text = if (partnerName.isNotEmpty()) {
+                        partnerName.first().uppercaseChar().toString()
+                    } else {
+                        "?"
+                    }
+                }
+            }
         }
 
         setupRecyclerView()
